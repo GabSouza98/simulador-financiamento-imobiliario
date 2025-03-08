@@ -1,6 +1,7 @@
 package simulador.financiamento;
 
 import lombok.Getter;
+import simulador.financiamento.utils.Constants;
 
 @Getter
 public class RendimentoPassivo {

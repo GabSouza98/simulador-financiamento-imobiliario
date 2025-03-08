@@ -4,78 +4,52 @@ import lombok.Getter;
 import simulador.financiamento.FGTS;
 import simulador.financiamento.RendimentoPassivo;
 import simulador.financiamento.tabela.TableRow;
+import simulador.financiamento.utils.RendaCerta;
 
 import java.util.Locale;
-
-import static java.util.Objects.nonNull;
 
 @Getter
 public class PRICE extends SistemaAmortizacao {
 
+    private final Double parcelaConstante;
+
     public PRICE(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
-                 Double valorParcela, Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
+                 Integer prazo, Double valorParcela, Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
                  RendimentoPassivo rendimentoPassivo,
                  FGTS fgts) {
-        super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, valorParcela,
+        super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, prazo, valorParcela,
                 valorExtraInicial, percentProximoValorExtra, valorExtraMinimo, rendimentoPassivo, fgts);
+
+        parcela = valorFinanciado / RendaCerta.calcularTermoExponencial(taxaJurosMensal, prazo);
+        parcelaConstante = parcela;
     }
 
     @Override
-    public void calcularFinanciamento() {
-
-        calcularPrimeiroMes();
-
-        Double saldoDevedor;
-        do {
-            saldoDevedor = calcularMes();
-        } while (saldoDevedor > 0);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Valor pago total: R$ %.2f\n", getValorPagoTotal()));
-        sb.append(String.format("Número de parcelas: %d", numeroParcelas));
-        System.out.println(sb);
-    }
-
-    private void calcularPrimeiroMes() {
-        this.valorPagoMensal.add(0.0);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, saldoDevedor));
-    }
-
-    private Double calcularMes() {
+    public Double calcularMes() {
         numeroParcelas++;
         fgts.calcularMes();
 
-        //Diminuicao do valorExtraInicial a cada mês
-        valorExtra = valorExtra*percentProximoValorExtra;
+        //J = SD * i
+        jurosMensal = saldoDevedor * taxaJurosMensal;
 
-        //Caso o valor extra diminui abaixo do mínimo, usa o valorExtraMinimo
-        valorExtra = Math.max(valorExtra, valorExtraMinimo);
+        //A = P - J
+        amortizacaoMensal = parcela - jurosMensal;
 
-        double valorPagoMensal = valorParcela + valorExtra;
+        valorPagoMensal = parcela;
 
-        //Abate o rendimento passivo anualmente
-        if (nonNull(rendimentoPassivo) && numeroParcelas % 12 == 0) {
-            valorPagoMensal += rendimentoPassivo.getRendimentoEfetivo();
-        }
+        atualizarValorExtra();
 
-        //Abate o FGTS a cada 2 anos
-        if (nonNull(fgts) && numeroParcelas % 24 == 0) {
-            valorPagoMensal += fgts.amortizar();
-        }
+        atualizarRendimentoPassivo();
 
-        saldoDevedor = saldoDevedor + saldoDevedor*jurosMensal - valorPagoMensal;
+        atualizarFgts();
 
-        if (saldoDevedor < 0) {
-            //Caso o saldo devedor fique negativo, o valorPagoMensal deve ser apenas o necessário para zerar o saldo devedor.
-            valorPagoMensal = valorPagoMensal + saldoDevedor;
-            saldoDevedor = 0.0;
-        }
+        saldoDevedor = saldoDevedor + jurosMensal - valorPagoMensal;
+        //saldoDevedor = saldoDevedor - amortizacaoMensal; //validar igualdade
 
-//        System.out.println(String.format("Parcela %d | Saldo Devedor: R$ %.2f | Valor Parcela: R$ %.2f | Valor Extra: R$ %.2f | Valor Pago Mensal: R$ %.2f", numeroParcelas, saldoDevedor, valorParcela, valorExtra, valorPagoMensal));
+        checarSaldoDevedorNegativo();
 
-        this.valorPagoMensal.add(valorPagoMensal);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f", numeroParcelas, valorParcela, valorExtra, valorPagoMensal, saldoDevedor));
-        this.linhasTabela.add(new TableRow(numeroParcelas, valorParcela, valorExtra, valorPagoMensal, saldoDevedor));
+        atualizarCampos();
+
         return saldoDevedor;
     }
 }
