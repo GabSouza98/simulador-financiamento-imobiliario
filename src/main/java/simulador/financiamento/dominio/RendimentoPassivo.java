@@ -1,4 +1,4 @@
-package simulador.financiamento;
+package simulador.financiamento.dominio;
 
 import lombok.Getter;
 import simulador.financiamento.utils.Constants;

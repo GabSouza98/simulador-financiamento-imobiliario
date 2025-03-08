@@ -1,24 +1,20 @@
 package simulador.financiamento.forms;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatCarbonIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import simulador.financiamento.ExcelWriter;
-import simulador.financiamento.FGTS;
-import simulador.financiamento.sistemas.amortizacao.PRICE;
-import simulador.financiamento.RendimentoPassivo;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import simulador.financiamento.tabela.ExcelWriter;
+import simulador.financiamento.dominio.FGTS;
+import simulador.financiamento.dominio.RendimentoPassivo;
+import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
+import simulador.financiamento.sistemas.amortizacao.PRICE;
 import simulador.financiamento.sistemas.amortizacao.SAC;
 import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
 import simulador.financiamento.tabela.TableRow;
@@ -44,7 +40,6 @@ public class PriceCalculatorGUI extends JFrame {
     private JTextField valorImovel;
     private JSlider percentualEntrada;
     private JTextField jurosAnual;
-    private JTextField valorParcela;
     private JTextField valorExtraInicial;
     private JTextField percentProximoValorExtra;
     private JTextField valorExtraMinimo;
@@ -56,7 +51,6 @@ public class PriceCalculatorGUI extends JFrame {
     private JPanel valorImovelPanel;
     private JPanel percentualEntradaPanel;
     private JPanel jurosAnualPanel;
-    private JPanel valorParcelaPanel;
     private JPanel valorExtraInicialPanel;
     private JPanel percentualProximoValorExtraPanel;
     private JPanel valorExtraMinimoPanel;
@@ -74,7 +68,6 @@ public class PriceCalculatorGUI extends JFrame {
     private JLabel valorImovelLabel;
     private JLabel percentualEntradaLabel;
     private JLabel jurosAnualLabel;
-    private JLabel valorParcelalabel;
     private JLabel valorExtraInicialLabel;
     private JLabel percentProximoValorExtraLabel;
     private JLabel valorExtraMinimoLabel;
@@ -98,17 +91,6 @@ public class PriceCalculatorGUI extends JFrame {
     private final ExcelWriter excelWriter = new ExcelWriter();
 
     private boolean darkTheme = true;
-    private int counter = 0;
-
-    private final List<LookAndFeel> lookAndFeels = List.of(
-            new FlatAtomOneDarkIJTheme(),
-            new FlatArcDarkOrangeIJTheme(),
-            new FlatDarculaLaf(),
-            new FlatCarbonIJTheme(),
-            new FlatArcOrangeIJTheme(),
-            new FlatIntelliJLaf(),
-            new FlatCyanLightIJTheme()
-    );
 
     private final Map<Integer, SistemaAmortizacao> simulationsMap = new HashMap<>();
 
@@ -122,20 +104,12 @@ public class PriceCalculatorGUI extends JFrame {
         // Set the frame location to the center of the screen
         setLocationRelativeTo(null);
 
-        sistemaAmortizacaoComboBox.addItem("PRICE");
-        sistemaAmortizacaoComboBox.addItem("SAC");
-
-        calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 20));
-        changeThemeButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
-        compararSimulacoesButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
-        downloadExcelButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+        defineOpcoesSistemasAmortizacao();
+        defineFontes();
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
-
         changeThemeButton.addActionListener(e -> toggleTheme());
-
         compararSimulacoesButton.addActionListener(e -> criarGrafico());
-
         downloadExcelButton.addActionListener(e -> {
             if (tabs.getTabCount() > 0) {
                 int selectedTab = tabs.getSelectedIndex();
@@ -154,6 +128,18 @@ public class PriceCalculatorGUI extends JFrame {
 
         // Set the frame visible
         setVisible(true);
+    }
+
+    private void defineFontes() {
+        calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 20));
+        changeThemeButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+        compararSimulacoesButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+        downloadExcelButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+    }
+
+    private void defineOpcoesSistemasAmortizacao() {
+        sistemaAmortizacaoComboBox.addItem(SistemaAmortizacaoEnum.PRICE.getNome());
+        sistemaAmortizacaoComboBox.addItem(SistemaAmortizacaoEnum.SAC.getNome());
     }
 
     private void criarGrafico() {
@@ -183,9 +169,6 @@ public class PriceCalculatorGUI extends JFrame {
         dialogFrame.pack();
         dialogFrame.setLocationRelativeTo(null);
         dialogFrame.setVisible(true);
-
-//            JDialog dialog = new JDialog(dialogFrame,"theTitle", Dialog.ModalityType.APPLICATION_MODAL);
-//            dialog.setVisible(true);
     }
 
     private void toggleTheme() {
@@ -193,30 +176,10 @@ public class PriceCalculatorGUI extends JFrame {
 
         try {
             if (darkTheme) {
-//                UIManager.setLookAndFeel(new FlatDarculaLaf());
                 UIManager.setLookAndFeel(new FlatArcDarkOrangeIJTheme());
             } else {
-//                UIManager.setLookAndFeel(new FlatIntelliJLaf());
                 UIManager.setLookAndFeel(new FlatArcOrangeIJTheme());
             }
-        } catch (UnsupportedLookAndFeelException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        SwingUtilities.updateComponentTreeUI(this);
-        pack();
-    }
-
-    private void changeTheme() {
-        if (++counter >= lookAndFeels.size()) {
-            counter = 0;
-        }
-
-        System.out.println(counter);
-
-        try {
-            UIManager.setLookAndFeel(lookAndFeels.get(counter));
-            System.out.println(lookAndFeels.get(counter).getDescription());
         } catch (UnsupportedLookAndFeelException ex) {
             throw new RuntimeException(ex);
         }
@@ -319,14 +282,13 @@ public class PriceCalculatorGUI extends JFrame {
 
     private SistemaAmortizacao getSistemaAmortizacao(String sistemaSelecionado) {
         SistemaAmortizacao sistemaAmortizacao;
-        if ("PRICE".equals(sistemaSelecionado)) {
+        if (SistemaAmortizacaoEnum.PRICE.getNome().equals(sistemaSelecionado)) {
             sistemaAmortizacao = new PRICE(
                     nomeFinanciamento.getText(),
                     Double.valueOf(valorImovel.getText()),
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    Double.valueOf(valorParcela.getText()),
                     Double.valueOf(valorExtraInicial.getText()),
                     Double.valueOf(percentProximoValorExtra.getText()),
                     Double.valueOf(valorExtraMinimo.getText()),
@@ -345,7 +307,6 @@ public class PriceCalculatorGUI extends JFrame {
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    Double.valueOf(valorParcela.getText()),
                     Double.valueOf(valorExtraInicial.getText()),
                     Double.valueOf(percentProximoValorExtra.getText()),
                     Double.valueOf(valorExtraMinimo.getText()),
@@ -367,7 +328,6 @@ public class PriceCalculatorGUI extends JFrame {
         percentualEntrada.setValue(50);
         jurosAnual.setText("");
         prazo.setText("");
-        valorParcela.setText("");
         valorExtraInicial.setText("");
         percentProximoValorExtra.setText("");
         valorExtraMinimo.setText("");
@@ -379,9 +339,8 @@ public class PriceCalculatorGUI extends JFrame {
         nomeFinanciamento.setText(sistemaAmortizacao.getNomeFinanciamento());
         valorImovel.setText(sistemaAmortizacao.getValorImovel().toString());
         percentualEntrada.setValue((int) (sistemaAmortizacao.getPercentualEntrada() * 100));
-        sistemaAmortizacaoComboBox.setSelectedIndex(1);
+        sistemaAmortizacaoComboBox.setSelectedIndex(sistemaAmortizacao.getSistemaAmortizacao().getIndex());
         jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual() * 100));
-        valorParcela.setText(sistemaAmortizacao.getParcela().toString());
         valorExtraInicial.setText(sistemaAmortizacao.getValorExtraInicial().toString());
         percentProximoValorExtra.setText(String.valueOf(sistemaAmortizacao.getPercentProximoValorExtra() * 100));
         valorExtraMinimo.setText(sistemaAmortizacao.getValorExtraMinimo().toString());
@@ -454,7 +413,7 @@ public class PriceCalculatorGUI extends JFrame {
         downloadExcelButton.setVerticalTextPosition(3);
         bottomLeftPanel.add(downloadExcelButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         upperLeftPanel = new JPanel();
-        upperLeftPanel.setLayout(new GridLayoutManager(17, 1, new Insets(20, 20, 20, 20), -1, -1));
+        upperLeftPanel.setLayout(new GridLayoutManager(16, 1, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
         upperLeftPanel.setForeground(new Color(-13947600));
         horizontalSplitPane.setLeftComponent(upperLeftPanel);
@@ -497,17 +456,9 @@ public class PriceCalculatorGUI extends JFrame {
         jurosAnualPanel.add(jurosAnualLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         jurosAnual = new JTextField();
         jurosAnualPanel.add(jurosAnual, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
-        valorParcelaPanel = new JPanel();
-        valorParcelaPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(valorParcelaPanel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(364, 37), null, 0, false));
-        valorParcelalabel = new JLabel();
-        valorParcelalabel.setText("Valor Parcela");
-        valorParcelaPanel.add(valorParcelalabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
-        valorParcela = new JTextField();
-        valorParcelaPanel.add(valorParcela, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         valorExtraInicialPanel = new JPanel();
         valorExtraInicialPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(valorExtraInicialPanel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(valorExtraInicialPanel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         valorExtraInicialLabel = new JLabel();
         valorExtraInicialLabel.setText("Valor Extra Inicial");
         valorExtraInicialPanel.add(valorExtraInicialLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
@@ -515,7 +466,7 @@ public class PriceCalculatorGUI extends JFrame {
         valorExtraInicialPanel.add(valorExtraInicial, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         percentualProximoValorExtraPanel = new JPanel();
         percentualProximoValorExtraPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(percentualProximoValorExtraPanel, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(percentualProximoValorExtraPanel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         percentProximoValorExtraLabel = new JLabel();
         percentProximoValorExtraLabel.setText("Perc. Prox. Valor Extra");
         percentProximoValorExtraLabel.putClientProperty("html.disable", Boolean.FALSE);
@@ -524,7 +475,7 @@ public class PriceCalculatorGUI extends JFrame {
         percentualProximoValorExtraPanel.add(percentProximoValorExtra, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         valorExtraMinimoPanel = new JPanel();
         valorExtraMinimoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(valorExtraMinimoPanel, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(100, -1), null, 0, false));
+        upperLeftPanel.add(valorExtraMinimoPanel, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(100, -1), null, 0, false));
         valorExtraMinimoLabel = new JLabel();
         valorExtraMinimoLabel.setText("Valor Extra Mínimo");
         valorExtraMinimoPanel.add(valorExtraMinimoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
@@ -532,7 +483,7 @@ public class PriceCalculatorGUI extends JFrame {
         valorExtraMinimoPanel.add(valorExtraMinimo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         valorInvestidoPanel = new JPanel();
         valorInvestidoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(valorInvestidoPanel, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(valorInvestidoPanel, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         valorInvestidoLabel = new JLabel();
         valorInvestidoLabel.setText("Valor Investido");
         valorInvestidoPanel.add(valorInvestidoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
@@ -540,14 +491,14 @@ public class PriceCalculatorGUI extends JFrame {
         valorInvestidoPanel.add(valorInvestido, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         rendimentoAnualPanel = new JPanel();
         rendimentoAnualPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(rendimentoAnualPanel, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(rendimentoAnualPanel, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         rendimentoAnualLabel = new JLabel();
         rendimentoAnualLabel.setText("Rendimento Anual");
         rendimentoAnualPanel.add(rendimentoAnualLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         rendimentoAnual = new JTextField();
         rendimentoAnualPanel.add(rendimentoAnual, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        upperLeftPanel.add(spacer2, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
+        upperLeftPanel.add(spacer2, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
         calcularButton = new JButton();
         calcularButton.setEnabled(true);
         Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
@@ -555,10 +506,10 @@ public class PriceCalculatorGUI extends JFrame {
         calcularButton.setHideActionText(false);
         calcularButton.setHorizontalTextPosition(0);
         calcularButton.setText("Calcular");
-        upperLeftPanel.add(calcularButton, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        upperLeftPanel.add(calcularButton, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         salarioBrutoPanel = new JPanel();
         salarioBrutoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Salário Bruto");
         salarioBrutoPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
@@ -566,7 +517,7 @@ public class PriceCalculatorGUI extends JFrame {
         salarioBrutoPanel.add(salarioBruto, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         saldoAtualPanel = new JPanel();
         saldoAtualPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(saldoAtualPanel, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(saldoAtualPanel, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Saldo FGTS");
         saldoAtualPanel.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
@@ -574,7 +525,7 @@ public class PriceCalculatorGUI extends JFrame {
         saldoAtualPanel.add(saldoFGTS, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         resetarCamposPanel = new JPanel();
         resetarCamposPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(resetarCamposPanel, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(resetarCamposPanel, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Resetar campos?");
         resetarCamposPanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));

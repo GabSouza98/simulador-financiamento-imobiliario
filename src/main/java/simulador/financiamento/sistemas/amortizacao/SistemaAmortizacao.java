@@ -1,9 +1,10 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
-import simulador.financiamento.ExcelWriter;
-import simulador.financiamento.FGTS;
-import simulador.financiamento.RendimentoPassivo;
+import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
+import simulador.financiamento.tabela.ExcelWriter;
+import simulador.financiamento.dominio.FGTS;
+import simulador.financiamento.dominio.RendimentoPassivo;
 import simulador.financiamento.tabela.TableRow;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
@@ -37,7 +38,7 @@ public abstract class SistemaAmortizacao {
     protected RendimentoPassivo rendimentoPassivo;
     protected FGTS fgts;
 
-    protected Double parcela;
+    protected Double parcela = 0.0;
     protected Double amortizacaoMensal = 0.0;
     protected Double valorPagoMensal = 0.0;
     protected Double jurosMensal = 0.0;
@@ -48,7 +49,7 @@ public abstract class SistemaAmortizacao {
 
     public SistemaAmortizacao(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
                               Integer prazo,
-                              Double parcela, Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
+                              Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
                               RendimentoPassivo rendimentoPassivo,
                               FGTS fgts) {
         this.nomeFinanciamento = nomeFinanciamento;
@@ -56,7 +57,6 @@ public abstract class SistemaAmortizacao {
         this.percentualEntrada = percentualEntrada/100;
         this.jurosAnual = jurosAnual/100;
         this.prazo = prazo;
-        this.parcela = 0.0;
         this.valorExtraInicial = valorExtraInicial;
         this.valorExtra = valorExtraInicial;
         this.percentProximoValorExtra = percentProximoValorExtra/100;
@@ -160,5 +160,7 @@ public abstract class SistemaAmortizacao {
     }
 
     protected abstract Double calcularMes();
+
+    public abstract SistemaAmortizacaoEnum getSistemaAmortizacao();
 
 }
