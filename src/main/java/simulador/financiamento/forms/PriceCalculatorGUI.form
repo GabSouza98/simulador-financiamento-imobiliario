@@ -121,7 +121,7 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="16" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="17" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="left"/>
@@ -406,14 +406,14 @@
                       </grid>
                       <vspacer id="ce63d">
                         <constraints>
-                          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
                             <preferred-size width="-1" height="50"/>
                           </grid>
                         </constraints>
                       </vspacer>
                       <component id="e305d" class="javax.swing.JButton" binding="calcularButton" default-binding="true">
                         <constraints>
-                          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -570,6 +570,16 @@
                           </component>
                         </children>
                       </grid>
+                      <component id="3c02a" class="javax.swing.JButton" binding="advancedOptionsButton">
+                        <constraints>
+                          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Opções Avançadas"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                 </children>

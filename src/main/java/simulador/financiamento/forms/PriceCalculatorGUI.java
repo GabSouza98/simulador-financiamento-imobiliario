@@ -57,7 +57,6 @@ public class PriceCalculatorGUI extends JFrame {
     private JPanel valorInvestidoPanel;
     private JPanel rendimentoAnualPanel;
     private JButton calcularButton;
-    private JTable priceJTable;
     private JTabbedPane tabs;
     private JLabel valorPagoTotalField;
     private JLabel numeroParcelasField;
@@ -87,6 +86,7 @@ public class PriceCalculatorGUI extends JFrame {
     private JPanel prazoPanel;
     private JLabel prazoLabel;
     private JTextField prazo;
+    private JButton advancedOptionsButton;
 
     private final ExcelWriter excelWriter = new ExcelWriter();
 
@@ -110,12 +110,16 @@ public class PriceCalculatorGUI extends JFrame {
         calcularButton.addActionListener(e -> calcularFinanciamento());
         changeThemeButton.addActionListener(e -> toggleTheme());
         compararSimulacoesButton.addActionListener(e -> criarGrafico());
-        downloadExcelButton.addActionListener(e -> {
-            if (tabs.getTabCount() > 0) {
-                int selectedTab = tabs.getSelectedIndex();
-                SistemaAmortizacao sistemaAmortizacao = simulationsMap.get(selectedTab);
-                excelWriter.writeTable(sistemaAmortizacao);
-            }
+        downloadExcelButton.addActionListener(e -> fazerDownload());
+
+        advancedOptionsButton.addActionListener(e -> {
+            AdvancedOptionsDialog dialog = new AdvancedOptionsDialog();
+            dialog.setMinimumSize(new Dimension(1100, 700));
+            dialog.setTitle("Opções Avançadas");
+            dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            dialog.setLocationRelativeTo(null);
+            dialog.pack();
+            dialog.setVisible(true);
         });
 
         tabs.addChangeListener(e -> {
@@ -130,10 +134,19 @@ public class PriceCalculatorGUI extends JFrame {
         setVisible(true);
     }
 
+    private void fazerDownload() {
+        if (tabs.getTabCount() > 0) {
+            int selectedTab = tabs.getSelectedIndex();
+            SistemaAmortizacao sistemaAmortizacao = simulationsMap.get(selectedTab);
+            excelWriter.writeTable(sistemaAmortizacao);
+        }
+    }
+
     private void defineFontes() {
         calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 20));
         changeThemeButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
         compararSimulacoesButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+        advancedOptionsButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
         downloadExcelButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
     }
 
@@ -413,7 +426,7 @@ public class PriceCalculatorGUI extends JFrame {
         downloadExcelButton.setVerticalTextPosition(3);
         bottomLeftPanel.add(downloadExcelButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         upperLeftPanel = new JPanel();
-        upperLeftPanel.setLayout(new GridLayoutManager(16, 1, new Insets(20, 20, 20, 20), -1, -1));
+        upperLeftPanel.setLayout(new GridLayoutManager(17, 1, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
         upperLeftPanel.setForeground(new Color(-13947600));
         horizontalSplitPane.setLeftComponent(upperLeftPanel);
@@ -498,7 +511,7 @@ public class PriceCalculatorGUI extends JFrame {
         rendimentoAnual = new JTextField();
         rendimentoAnualPanel.add(rendimentoAnual, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        upperLeftPanel.add(spacer2, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
+        upperLeftPanel.add(spacer2, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
         calcularButton = new JButton();
         calcularButton.setEnabled(true);
         Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
@@ -506,7 +519,7 @@ public class PriceCalculatorGUI extends JFrame {
         calcularButton.setHideActionText(false);
         calcularButton.setHorizontalTextPosition(0);
         calcularButton.setText("Calcular");
-        upperLeftPanel.add(calcularButton, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        upperLeftPanel.add(calcularButton, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         salarioBrutoPanel = new JPanel();
         salarioBrutoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -548,6 +561,9 @@ public class PriceCalculatorGUI extends JFrame {
         prazoPanel.add(prazoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         prazo = new JTextField();
         prazoPanel.add(prazo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        advancedOptionsButton = new JButton();
+        advancedOptionsButton.setText("Opções Avançadas");
+        upperLeftPanel.add(advancedOptionsButton, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         rightPanel = new JPanel();
         rightPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         verticalSplitPlane.setRightComponent(rightPanel);
