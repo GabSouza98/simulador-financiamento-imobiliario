@@ -10,6 +10,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import simulador.financiamento.dominio.AmortizacaoExtra;
 import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.dominio.FGTS;
 import simulador.financiamento.dominio.RendimentoPassivo;
@@ -104,6 +105,7 @@ public class PriceCalculatorGUI extends JFrame {
     private JPanel amortizacaoExtraPanel;
     private JPanel investimentosPanel;
     private JPanel fgtsPanel;
+    private JCheckBox qtdOcorrenciasCheckBox;
 
     private final ExcelWriter excelWriter = new ExcelWriter();
 
@@ -126,6 +128,7 @@ public class PriceCalculatorGUI extends JFrame {
         desabilitaCamposAmortizacao();
         desabilitaCamposInvestimentos();
         desabilitaCamposFgts();
+        preencheCamposOpcionaisDefault();
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
         changeThemeButton.addActionListener(e -> toggleTheme());
@@ -174,6 +177,10 @@ public class PriceCalculatorGUI extends JFrame {
             }
         });
 
+        qtdOcorrenciasCheckBox.addActionListener(e -> {
+            quantidadePagamentosExtra.setEnabled(!qtdOcorrenciasCheckBox.isSelected());
+        });
+
         // Set the frame visible
         setVisible(true);
     }
@@ -187,11 +194,11 @@ public class PriceCalculatorGUI extends JFrame {
     }
 
     private void defineFontes() {
-        calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 20));
-        changeThemeButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
-        compararSimulacoesButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
-        advancedOptionsButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
-        downloadExcelButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.PLAIN, 16));
+        calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.BOLD, 16));
+        changeThemeButton.setFont(new Font(changeThemeButton.getFont().getFontName(), Font.PLAIN, 16));
+        compararSimulacoesButton.setFont(new Font(compararSimulacoesButton.getFont().getFontName(), Font.PLAIN, 16));
+        advancedOptionsButton.setFont(new Font(advancedOptionsButton.getFont().getFontName(), Font.PLAIN, 16));
+        downloadExcelButton.setFont(new Font(downloadExcelButton.getFont().getFontName(), Font.PLAIN, 16));
     }
 
     private void defineOpcoesSistemasAmortizacao() {
@@ -206,6 +213,7 @@ public class PriceCalculatorGUI extends JFrame {
         mesInicialPanel.setVisible(false);
         intervaloPanel.setVisible(false);
         quantidadePanel.setVisible(false);
+        quantidadePagamentosExtra.setEnabled(false);
     }
 
     private void habilitaCamposAmortizacao() {
@@ -237,6 +245,21 @@ public class PriceCalculatorGUI extends JFrame {
         saldoAtualPanel.setVisible(true);
     }
 
+    private void preencheCamposOpcionaisDefault() {
+        valorExtraInicial.setText("0");
+        percentProximoValorExtra.setText("100");
+        valorExtraMinimo.setText("0");
+        mesInicial.setText("1");
+        intervalo.setText("1");
+        quantidadePagamentosExtra.setText("0");
+
+        valorInvestido.setText("0");
+        rendimentoAnual.setText("0");
+
+        salarioBruto.setText("0");
+        saldoFGTS.setText("0");
+    }
+
     private void criarGrafico() {
         XYSeriesCollection dataset = new XYSeriesCollection();
 
@@ -247,7 +270,7 @@ public class PriceCalculatorGUI extends JFrame {
             //Starts at 1 to skip header in priceTable
             for (int i = 1; i < tabela.size(); i++) {
                 String[] row = tabela.get(i).split(",");
-                series.add(Double.parseDouble(row[0]), Double.parseDouble(row[4]));
+                series.add(Double.parseDouble(row[0]), Double.parseDouble(row[5]));
             }
 
             dataset.addSeries(series);
@@ -384,9 +407,14 @@ public class PriceCalculatorGUI extends JFrame {
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    Double.valueOf(valorExtraInicial.getText()),
-                    Double.valueOf(percentProximoValorExtra.getText()),
-                    Double.valueOf(valorExtraMinimo.getText()),
+                    new AmortizacaoExtra(
+                            Double.valueOf(valorExtraInicial.getText()),
+                            Double.valueOf(percentProximoValorExtra.getText()),
+                            Double.valueOf(valorExtraMinimo.getText()),
+                            Integer.valueOf(mesInicial.getText()),
+                            Integer.valueOf(intervalo.getText()),
+                            Integer.valueOf(quantidadePagamentosExtra.getText()),
+                            qtdOcorrenciasCheckBox.isSelected()),
                     new RendimentoPassivo(
                             Double.valueOf(valorInvestido.getText()),
                             Double.valueOf(rendimentoAnual.getText())),
@@ -402,9 +430,14 @@ public class PriceCalculatorGUI extends JFrame {
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    Double.valueOf(valorExtraInicial.getText()),
-                    Double.valueOf(percentProximoValorExtra.getText()),
-                    Double.valueOf(valorExtraMinimo.getText()),
+                    new AmortizacaoExtra(
+                            Double.valueOf(valorExtraInicial.getText()),
+                            Double.valueOf(percentProximoValorExtra.getText()),
+                            Double.valueOf(valorExtraMinimo.getText()),
+                            Integer.valueOf(mesInicial.getText()),
+                            Integer.valueOf(intervalo.getText()),
+                            Integer.valueOf(quantidadePagamentosExtra.getText()),
+                            qtdOcorrenciasCheckBox.isSelected()),
                     new RendimentoPassivo(
                             Double.valueOf(valorInvestido.getText()),
                             Double.valueOf(rendimentoAnual.getText())),
@@ -420,7 +453,7 @@ public class PriceCalculatorGUI extends JFrame {
     private void resetFields() {
         nomeFinanciamento.setText("");
         valorImovel.setText("");
-        percentualEntrada.setValue(50);
+        percentualEntrada.setValue(30);
         jurosAnual.setText("");
         prazo.setText("");
         valorExtraInicial.setText("");
@@ -436,9 +469,12 @@ public class PriceCalculatorGUI extends JFrame {
         percentualEntrada.setValue((int) (sistemaAmortizacao.getPercentualEntrada() * 100));
         sistemaAmortizacaoComboBox.setSelectedIndex(sistemaAmortizacao.getSistemaAmortizacao().getIndex());
         jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual() * 100));
-        valorExtraInicial.setText(sistemaAmortizacao.getValorExtraInicial().toString());
-        percentProximoValorExtra.setText(String.valueOf(sistemaAmortizacao.getPercentProximoValorExtra() * 100));
-        valorExtraMinimo.setText(sistemaAmortizacao.getValorExtraMinimo().toString());
+        valorExtraInicial.setText(sistemaAmortizacao.getAmortizacaoExtra().getValorExtraInicial().toString());
+        percentProximoValorExtra.setText(String.valueOf(sistemaAmortizacao.getAmortizacaoExtra().getPercentProximoValorExtra() * 100));
+        valorExtraMinimo.setText(sistemaAmortizacao.getAmortizacaoExtra().getValorExtraMinimo().toString());
+        mesInicial.setText(sistemaAmortizacao.getAmortizacaoExtra().getMesInicial().toString());
+        intervalo.setText(sistemaAmortizacao.getAmortizacaoExtra().getIntervalo().toString());
+        quantidadePagamentosExtra.setText(sistemaAmortizacao.getAmortizacaoExtra().getQuantidadeAmortizacoesDesejadas().toString());
         valorInvestido.setText(sistemaAmortizacao.getRendimentoPassivo().getValorInvestido().toString());
         rendimentoAnual.setText(sistemaAmortizacao.getRendimentoPassivo().getRendimentoAnual().toString());
 
@@ -479,7 +515,7 @@ public class PriceCalculatorGUI extends JFrame {
         horizontalSplitPane.setOrientation(0);
         leftPanel.add(horizontalSplitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, -1), new Dimension(400, -1), null, 0, false));
         bottomLeftPanel = new JPanel();
-        bottomLeftPanel.setLayout(new GridLayoutManager(7, 2, new Insets(20, 20, 20, 20), -1, -1));
+        bottomLeftPanel.setLayout(new GridLayoutManager(9, 2, new Insets(20, 20, 20, 20), -1, -1));
         horizontalSplitPane.setRightComponent(bottomLeftPanel);
         valorPagoTotalField = new JLabel();
         valorPagoTotalField.setText("Valor Pago Total:");
@@ -507,8 +543,19 @@ public class PriceCalculatorGUI extends JFrame {
         downloadExcelButton.setText("Download Excel");
         downloadExcelButton.setVerticalTextPosition(3);
         bottomLeftPanel.add(downloadExcelButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        advancedOptionsButton = new JButton();
+        advancedOptionsButton.setText("Opções Avançadas");
+        bottomLeftPanel.add(advancedOptionsButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        calcularButton = new JButton();
+        calcularButton.setEnabled(true);
+        Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
+        if (calcularButtonFont != null) calcularButton.setFont(calcularButtonFont);
+        calcularButton.setHideActionText(false);
+        calcularButton.setHorizontalTextPosition(0);
+        calcularButton.setText("Calcular");
+        bottomLeftPanel.add(calcularButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         upperLeftPanel = new JPanel();
-        upperLeftPanel.setLayout(new GridLayoutManager(23, 6, new Insets(20, 20, 20, 20), -1, -1));
+        upperLeftPanel.setLayout(new GridLayoutManager(21, 6, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
         upperLeftPanel.setForeground(new Color(-13947600));
         horizontalSplitPane.setLeftComponent(upperLeftPanel);
@@ -594,15 +641,7 @@ public class PriceCalculatorGUI extends JFrame {
         rendimentoAnual = new JTextField();
         rendimentoAnualPanel.add(rendimentoAnual, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        upperLeftPanel.add(spacer2, new GridConstraints(21, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
-        calcularButton = new JButton();
-        calcularButton.setEnabled(true);
-        Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
-        if (calcularButtonFont != null) calcularButton.setFont(calcularButtonFont);
-        calcularButton.setHideActionText(false);
-        calcularButton.setHorizontalTextPosition(0);
-        calcularButton.setText("Calcular");
-        upperLeftPanel.add(calcularButton, new GridConstraints(22, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        upperLeftPanel.add(spacer2, new GridConstraints(20, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
         salarioBrutoPanel = new JPanel();
         salarioBrutoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(17, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -644,9 +683,6 @@ public class PriceCalculatorGUI extends JFrame {
         prazoPanel.add(prazoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         prazo = new JTextField();
         prazoPanel.add(prazo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
-        advancedOptionsButton = new JButton();
-        advancedOptionsButton.setText("Opções Avançadas");
-        upperLeftPanel.add(advancedOptionsButton, new GridConstraints(20, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         mesInicialPanel = new JPanel();
         mesInicialPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(mesInicialPanel, new GridConstraints(10, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -664,13 +700,17 @@ public class PriceCalculatorGUI extends JFrame {
         intervalo = new JTextField();
         intervaloPanel.add(intervalo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         quantidadePanel = new JPanel();
-        quantidadePanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        quantidadePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(quantidadePanel, new GridConstraints(12, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText("Quantidade Ocorrências");
         quantidadePanel.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         quantidadePagamentosExtra = new JTextField();
-        quantidadePanel.add(quantidadePagamentosExtra, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        quantidadePanel.add(quantidadePagamentosExtra, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
+        qtdOcorrenciasCheckBox = new JCheckBox();
+        qtdOcorrenciasCheckBox.setSelected(true);
+        qtdOcorrenciasCheckBox.setText("Sempre");
+        quantidadePanel.add(qtdOcorrenciasCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         amortizacaoExtraPanel = new JPanel();
         amortizacaoExtraPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(amortizacaoExtraPanel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

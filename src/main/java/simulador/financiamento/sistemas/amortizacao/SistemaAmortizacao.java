@@ -1,6 +1,7 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
+import simulador.financiamento.dominio.AmortizacaoExtra;
 import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
 import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.dominio.FGTS;
@@ -23,9 +24,6 @@ public abstract class SistemaAmortizacao {
     protected final Double percentualEntrada;
     protected final Double jurosAnual;
     protected final Integer prazo;
-    protected final Double valorExtraInicial;
-    protected final Double percentProximoValorExtra;
-    protected final Double valorExtraMinimo;
     protected final ExcelWriter excelWriter = new ExcelWriter();
 
     protected Double taxaJurosMensal;
@@ -33,8 +31,8 @@ public abstract class SistemaAmortizacao {
     protected Double saldoDevedor;
     protected final Double valorFinanciado;
     protected Integer numeroParcelas = 0;
-    protected Double valorExtra;
 
+    protected AmortizacaoExtra amortizacaoExtra;
     protected RendimentoPassivo rendimentoPassivo;
     protected FGTS fgts;
 
@@ -49,26 +47,28 @@ public abstract class SistemaAmortizacao {
 
     public SistemaAmortizacao(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
                               Integer prazo,
-                              Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
+                              AmortizacaoExtra amortizacaoExtra,
                               RendimentoPassivo rendimentoPassivo,
                               FGTS fgts) {
+
+        //Campos obrigatórios
         this.nomeFinanciamento = nomeFinanciamento;
         this.valorImovel = valorImovel;
         this.percentualEntrada = percentualEntrada/100;
         this.jurosAnual = jurosAnual/100;
         this.prazo = prazo;
-        this.valorExtraInicial = valorExtraInicial;
-        this.valorExtra = valorExtraInicial;
-        this.percentProximoValorExtra = percentProximoValorExtra/100;
-        this.valorExtraMinimo = valorExtraMinimo;
 
+        //Inicialização de parâmetros
         this.taxaJurosMensal = Conversor.converterTaxaAnualParaMensal(jurosAnual);
-        this.entrada = valorImovel*this.percentualEntrada;
-        this.saldoDevedor = valorImovel - this.entrada;
+        this.entrada = valorImovel * this.percentualEntrada;
         this.valorFinanciado = valorImovel - this.entrada;
+        this.saldoDevedor = valorImovel - this.entrada;
 
+        //Campos opcionais
+        this.amortizacaoExtra = amortizacaoExtra;
         this.rendimentoPassivo = rendimentoPassivo;
         this.fgts = fgts;
+
         this.tabela.add(createHeaderRow());
         System.out.println(this);
     }
@@ -97,7 +97,8 @@ public abstract class SistemaAmortizacao {
         sb.append(String.format("\nFinancimento: %s", nomeFinanciamento));
         sb.append(String.format("\nValor Imóvel: R$ %.2f, Valor Entrada: R$ %.2f", valorImovel, entrada));
         sb.append(String.format("\nJuros Anual: %.2f%%", jurosAnual*100));
-        sb.append(String.format("\nValor Parcela: R$ %.2f, ValorExtraInicial: R$ %.2f, ValorExtraMinimo: R$ %.2f", parcela, valorExtraInicial, valorExtraMinimo));
+        sb.append(String.format("\nValor Parcela: R$ %.2f, ValorExtraInicial: R$ %.2f, ValorExtraMinimo: R$ %.2f",
+                parcela, amortizacaoExtra.getValorExtraInicial(), amortizacaoExtra.getValorExtraMinimo()));
         if (nonNull(rendimentoPassivo)) {
             sb.append(String.format("\nValor Investido: R$ %.2f", rendimentoPassivo.getValorInvestido()));
         }
@@ -115,14 +116,37 @@ public abstract class SistemaAmortizacao {
     }
 
     protected void atualizarValorExtra() {
-        //Diminuicao do valorExtraInicial a cada mês
-        valorExtra = valorExtra *  percentProximoValorExtra;
+        if (numeroParcelas >= amortizacaoExtra.getMesInicial()
+            && amortizacaoExtra.deveAmortizar()
+            && intervaloCorreto()
+        ) {
 
-        //Caso o valor extra diminua abaixo do mínimo, usa o valorExtraMinimo
-        valorExtra = Math.max(valorExtra, valorExtraMinimo);
+            if (amortizacaoExtra.getAmortizacoesFeitas() == 0) {
+                amortizacaoExtra.setValorExtra(amortizacaoExtra.getValorExtraAnterior());
+            } else {
+                //Diminuicao do valorExtraInicial a cada mês
+                amortizacaoExtra.setValorExtra(amortizacaoExtra.getValorExtraAnterior() * amortizacaoExtra.getPercentProximoValorExtra());
+            }
 
-        valorPagoMensal += valorExtra;
-        amortizacaoMensal += valorExtra;
+            //Caso o valor extra diminua abaixo do mínimo, usa o valorExtraMinimo
+            amortizacaoExtra.setValorExtra(Math.max(amortizacaoExtra.getValorExtra(), amortizacaoExtra.getValorExtraMinimo()));
+
+            valorPagoMensal += amortizacaoExtra.getValorExtra();
+            amortizacaoMensal += amortizacaoExtra.getValorExtra();
+
+            amortizacaoExtra.setValorExtraAnterior(amortizacaoExtra.getValorExtra());
+            amortizacaoExtra.incrementarAmortizacoes();
+        } else {
+            amortizacaoExtra.setValorExtra(0.0);
+        }
+    }
+
+    private boolean intervaloCorreto() {
+        if (amortizacaoExtra.getMesInicial() % 2 == 0) {
+            return numeroParcelas % amortizacaoExtra.getIntervalo() == 0;
+        } else {
+            return (numeroParcelas - amortizacaoExtra.getMesInicial()) % amortizacaoExtra.getIntervalo() == 0;
+        }
     }
 
     protected void atualizarRendimentoPassivo() {
@@ -149,14 +173,16 @@ public abstract class SistemaAmortizacao {
             valorPagoMensal = valorPagoMensal + saldoDevedor;
             amortizacaoMensal = amortizacaoMensal + saldoDevedor;
             saldoDevedor = 0.0;
+            parcela = amortizacaoMensal + jurosMensal;
         }
     }
 
     protected void atualizarCampos() {
         //System.out.println(String.format("Parcela %d | Saldo Devedor: R$ %.2f | Valor Parcela: R$ %.2f | Valor Extra: R$ %.2f | Valor Pago Mensal: R$ %.2f", numeroParcelas, saldoDevedor, parcela, valorExtra, valorPagoMensal));
         this.valorPagoMensalList.add(valorPagoMensal);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f", numeroParcelas, amortizacaoMensal, parcela, valorExtra, valorPagoMensal, saldoDevedor));
-        this.linhasTabela.add(new TableRow(numeroParcelas, parcela, valorExtra, valorPagoMensal, saldoDevedor));
+        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f",
+                numeroParcelas, amortizacaoMensal, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
+        this.linhasTabela.add(new TableRow(numeroParcelas, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
     }
 
     protected abstract Double calcularMes();

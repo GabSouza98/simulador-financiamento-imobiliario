@@ -1,6 +1,7 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
+import simulador.financiamento.dominio.AmortizacaoExtra;
 import simulador.financiamento.dominio.FGTS;
 import simulador.financiamento.dominio.RendimentoPassivo;
 import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
@@ -11,11 +12,12 @@ public class SAC extends SistemaAmortizacao {
     private final Double amortizacaoConstante;
 
     public SAC(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
-                 Integer prazo, Double valorExtraInicial, Double percentProximoValorExtra, Double valorExtraMinimo,
+                 Integer prazo,
+                 AmortizacaoExtra amortizacaoExtra,
                  RendimentoPassivo rendimentoPassivo,
                  FGTS fgts) {
         super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, prazo,
-                valorExtraInicial, percentProximoValorExtra, valorExtraMinimo, rendimentoPassivo, fgts);
+                amortizacaoExtra, rendimentoPassivo, fgts);
 
         amortizacaoConstante = valorFinanciado / (double) prazo;
     }

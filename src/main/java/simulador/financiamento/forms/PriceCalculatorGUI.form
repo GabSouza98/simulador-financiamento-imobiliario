@@ -45,7 +45,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="9" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="right"/>
@@ -119,9 +119,33 @@
                           <verticalTextPosition value="3"/>
                         </properties>
                       </component>
+                      <component id="3c02a" class="javax.swing.JButton" binding="advancedOptionsButton">
+                        <constraints>
+                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Opções Avançadas"/>
+                        </properties>
+                      </component>
+                      <component id="e305d" class="javax.swing.JButton" binding="calcularButton" default-binding="true">
+                        <constraints>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <enabled value="true"/>
+                          <font/>
+                          <hideActionText value="false"/>
+                          <horizontalTextPosition value="0"/>
+                          <text value="Calcular"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
-                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="23" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="21" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="left"/>
@@ -408,25 +432,11 @@
                       </grid>
                       <vspacer id="ce63d">
                         <constraints>
-                          <grid row="21" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                          <grid row="20" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
                             <preferred-size width="-1" height="50"/>
                           </grid>
                         </constraints>
                       </vspacer>
-                      <component id="e305d" class="javax.swing.JButton" binding="calcularButton" default-binding="true">
-                        <constraints>
-                          <grid row="22" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                            <preferred-size width="200" height="-1"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <enabled value="true"/>
-                          <font/>
-                          <hideActionText value="false"/>
-                          <horizontalTextPosition value="0"/>
-                          <text value="Calcular"/>
-                        </properties>
-                      </component>
                       <grid id="1ae88" binding="salarioBrutoPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
@@ -572,16 +582,6 @@
                           </component>
                         </children>
                       </grid>
-                      <component id="3c02a" class="javax.swing.JButton" binding="advancedOptionsButton">
-                        <constraints>
-                          <grid row="20" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                            <preferred-size width="200" height="-1"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <text value="Opções Avançadas"/>
-                        </properties>
-                      </component>
                       <grid id="a0c47" binding="mesInicialPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
@@ -640,7 +640,7 @@
                           </component>
                         </children>
                       </grid>
-                      <grid id="5f042" binding="quantidadePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="5f042" binding="quantidadePanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="12" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -662,10 +662,19 @@
                           <component id="1efb0" class="javax.swing.JTextField" binding="quantidadePagamentosExtra">
                             <constraints>
                               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="200" height="-1"/>
+                                <preferred-size width="100" height="-1"/>
                               </grid>
                             </constraints>
                             <properties/>
+                          </component>
+                          <component id="c39d2" class="javax.swing.JCheckBox" binding="qtdOcorrenciasCheckBox">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <selected value="true"/>
+                              <text value="Sempre"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
