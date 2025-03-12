@@ -1,10 +1,7 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
-import simulador.financiamento.dominio.AmortizacaoExtra;
-import simulador.financiamento.dominio.FGTS;
-import simulador.financiamento.dominio.RendimentoPassivo;
-import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
+import simulador.financiamento.dominio.*;
 import simulador.financiamento.utils.RendaCerta;
 
 @Getter
@@ -15,9 +12,10 @@ public class PRICE extends SistemaAmortizacao {
     public PRICE(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
                  Integer prazo, AmortizacaoExtra amortizacaoExtra,
                  RendimentoPassivo rendimentoPassivo,
-                 FGTS fgts) {
+                 FGTS fgts,
+                 OpcoesAvancadas opcoesAvancadas) {
         super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, prazo,
-                amortizacaoExtra, rendimentoPassivo, fgts);
+                amortizacaoExtra, rendimentoPassivo, fgts, opcoesAvancadas);
 
         parcela = valorFinanciado / RendaCerta.calcularTermoExponencial(taxaJurosMensal, prazo);
         parcelaConstante = parcela;
@@ -31,6 +29,7 @@ public class PRICE extends SistemaAmortizacao {
     @Override
     public Double calcularMes() {
         numeroParcelas++;
+
         fgts.calcularMes();
 
         //J = SD * i

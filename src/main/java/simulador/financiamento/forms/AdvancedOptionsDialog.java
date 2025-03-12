@@ -3,6 +3,7 @@ package simulador.financiamento.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import simulador.financiamento.dominio.OpcoesAvancadas;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -10,6 +11,10 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Locale;
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 public class AdvancedOptionsDialog extends JDialog {
     private JPanel contentPane;
@@ -24,22 +29,19 @@ public class AdvancedOptionsDialog extends JDialog {
     private JLabel valorizacaoLabel;
     private JPanel buttonsPanel;
 
-    public AdvancedOptionsDialog() {
+    private OpcoesAvancadas opcoesAvancadas;
+
+    public AdvancedOptionsDialog(OpcoesAvancadas opcoesAvancadas) {
+        this.opcoesAvancadas = opcoesAvancadas;
+
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+        preencheCamposDefault();
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        buttonOK.addActionListener(e -> onOK());
+        buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -50,21 +52,40 @@ public class AdvancedOptionsDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    public OpcoesAvancadas showDialog() {
+        setVisible(true);
+        return opcoesAvancadas;
     }
 
     private void onOK() {
-        // add your code here
+        if (isNull(opcoesAvancadas)) {
+            opcoesAvancadas = new OpcoesAvancadas(
+                    Double.valueOf(inflacao.getText()),
+                    Double.valueOf(valorizacao.getText()));
+        }
+
+        setVisible(false);
         dispose();
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        setVisible(false);
         dispose();
+    }
+
+    private void preencheCamposDefault() {
+        if (isNull(opcoesAvancadas)) {
+            inflacao.setText("0");
+            valorizacao.setText("0");
+        } else {
+            inflacao.setText(opcoesAvancadas.getInflacao().toString());
+            valorizacao.setText(opcoesAvancadas.getValorizacao().toString());
+        }
     }
 
     {

@@ -1,11 +1,8 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
-import simulador.financiamento.dominio.AmortizacaoExtra;
-import simulador.financiamento.dominio.SistemaAmortizacaoEnum;
+import simulador.financiamento.dominio.*;
 import simulador.financiamento.tabela.ExcelWriter;
-import simulador.financiamento.dominio.FGTS;
-import simulador.financiamento.dominio.RendimentoPassivo;
 import simulador.financiamento.tabela.TableRow;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
@@ -14,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Getter
@@ -35,6 +33,7 @@ public abstract class SistemaAmortizacao {
     protected AmortizacaoExtra amortizacaoExtra;
     protected RendimentoPassivo rendimentoPassivo;
     protected FGTS fgts;
+    protected OpcoesAvancadas opcoesAvancadas;
 
     protected Double parcela = 0.0;
     protected Double amortizacaoMensal = 0.0;
@@ -45,11 +44,15 @@ public abstract class SistemaAmortizacao {
     protected List<String> tabela = new ArrayList<>();
     protected List<TableRow> linhasTabela = new ArrayList<>();
 
-    public SistemaAmortizacao(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
+    public SistemaAmortizacao(String nomeFinanciamento,
+                              Double valorImovel,
+                              Double percentualEntrada,
+                              Double jurosAnual,
                               Integer prazo,
                               AmortizacaoExtra amortizacaoExtra,
                               RendimentoPassivo rendimentoPassivo,
-                              FGTS fgts) {
+                              FGTS fgts,
+                              OpcoesAvancadas opcoesAvancadas) {
 
         //Campos obrigatórios
         this.nomeFinanciamento = nomeFinanciamento;
@@ -68,6 +71,7 @@ public abstract class SistemaAmortizacao {
         this.amortizacaoExtra = amortizacaoExtra;
         this.rendimentoPassivo = rendimentoPassivo;
         this.fgts = fgts;
+        this.opcoesAvancadas = opcoesAvancadas;
 
         this.tabela.add(createHeaderRow());
         System.out.println(this);
@@ -81,9 +85,13 @@ public abstract class SistemaAmortizacao {
             saldoDevedor = calcularMes();
         } while (saldoDevedor > 0);
 
+        opcoesAvancadas.atualizarValorImovel(numeroParcelas);
+
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Valor pago total: R$ %.2f\n", getValorPagoTotal()));
-        sb.append(String.format("Número de parcelas: %d", numeroParcelas));
+        sb.append(String.format("Número de parcelas: %d\n", numeroParcelas));
+        sb.append(String.format("Valor Imóvel Valorizado: R$ %.2f\n", opcoesAvancadas.getValorImovelValorizado()));
+        sb.append(String.format("Valor Imóvel Inflação: R$ %.2f\n", opcoesAvancadas.getValorImovelInflacao()));
         System.out.println(sb);
     }
 
@@ -110,9 +118,12 @@ public abstract class SistemaAmortizacao {
     }
 
     protected void calcularPrimeiroMes() {
-        this.valorPagoMensalList.add(0.0);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
-        this.linhasTabela.add(new TableRow(0, 0.0, 0.0, 0.0, saldoDevedor));
+        opcoesAvancadas = new OpcoesAvancadas(0.0, 0.0);
+        opcoesAvancadas.setValorImovelInicial(valorImovel);
+
+        valorPagoMensalList.add(0.0);
+        tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
+        linhasTabela.add(new TableRow(0, 0.0, 0.0, 0.0, saldoDevedor));
     }
 
     protected void atualizarValorExtra() {
