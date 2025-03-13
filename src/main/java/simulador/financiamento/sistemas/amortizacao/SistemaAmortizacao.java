@@ -1,6 +1,7 @@
 package simulador.financiamento.sistemas.amortizacao;
 
 import lombok.Getter;
+import lombok.Setter;
 import simulador.financiamento.dominio.*;
 import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.tabela.TableRow;
@@ -15,6 +16,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Getter
+@Setter
 public abstract class SistemaAmortizacao {
 
     protected final String nomeFinanciamento;
@@ -118,7 +120,6 @@ public abstract class SistemaAmortizacao {
     }
 
     protected void calcularPrimeiroMes() {
-        opcoesAvancadas = new OpcoesAvancadas(0.0, 0.0);
         opcoesAvancadas.setValorImovelInicial(valorImovel);
 
         valorPagoMensalList.add(0.0);

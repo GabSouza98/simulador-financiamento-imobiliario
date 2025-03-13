@@ -110,7 +110,7 @@ public class PriceCalculatorGUI extends JFrame {
 
     private final Map<Integer, SistemaAmortizacao> simulationsMap = new HashMap<>();
 
-    private OpcoesAvancadas opcoesAvancadas;
+    private OpcoesAvancadas opcoesAvancadas = new OpcoesAvancadas(0.0, 0.0);
 
     public PriceCalculatorGUI() {
 
@@ -118,6 +118,9 @@ public class PriceCalculatorGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(contentPane);
         getContentPane().setBackground(Color.black);
+
+        horizontalSplitPane.setDividerLocation(500);
+
         pack();
         // Set the frame location to the center of the screen
         setLocationRelativeTo(null);

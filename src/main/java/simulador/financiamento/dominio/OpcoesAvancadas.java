@@ -6,7 +6,6 @@ import lombok.ToString;
 import simulador.financiamento.utils.Conversor;
 
 @Getter
-@Setter
 @ToString
 public class OpcoesAvancadas {
     private final Double inflacao;
@@ -15,6 +14,7 @@ public class OpcoesAvancadas {
     private final Double inflacaoMensal;
     private final Double valorizacaoMensal;
 
+    @Setter
     private Double valorImovelInicial;
     private Double valorImovelValorizado;
     private Double valorImovelInflacao;

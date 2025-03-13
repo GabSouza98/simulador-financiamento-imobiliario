@@ -63,11 +63,9 @@ public class AdvancedOptionsDialog extends JDialog {
     }
 
     private void onOK() {
-        if (isNull(opcoesAvancadas)) {
-            opcoesAvancadas = new OpcoesAvancadas(
-                    Double.valueOf(inflacao.getText()),
-                    Double.valueOf(valorizacao.getText()));
-        }
+        opcoesAvancadas = new OpcoesAvancadas(
+                Double.valueOf(inflacao.getText()),
+                Double.valueOf(valorizacao.getText()));
 
         setVisible(false);
         dispose();
