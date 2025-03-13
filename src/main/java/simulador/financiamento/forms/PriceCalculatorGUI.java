@@ -119,6 +119,8 @@ public class PriceCalculatorGUI extends JFrame {
         setContentPane(contentPane);
         getContentPane().setBackground(Color.black);
 
+        JScrollPane jScrollPane = new JScrollPane(upperLeftPanel);
+        horizontalSplitPane.setLeftComponent(jScrollPane);
         horizontalSplitPane.setDividerLocation(500);
 
         pack();
@@ -573,6 +575,7 @@ public class PriceCalculatorGUI extends JFrame {
         bottomLeftPanel.add(calcularButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         upperLeftPanel = new JPanel();
         upperLeftPanel.setLayout(new GridLayoutManager(21, 6, new Insets(20, 20, 20, 20), -1, -1));
+        upperLeftPanel.setAutoscrolls(true);
         upperLeftPanel.setFocusable(false);
         upperLeftPanel.setForeground(new Color(-13947600));
         horizontalSplitPane.setLeftComponent(upperLeftPanel);

@@ -155,6 +155,7 @@
                       <splitpane position="left"/>
                     </constraints>
                     <properties>
+                      <autoscrolls value="true"/>
                       <focusable value="false"/>
                       <foreground color="-13947600"/>
                     </properties>
