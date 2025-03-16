@@ -146,7 +146,7 @@ public class PriceCalculatorGUI extends JFrame {
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
         changeThemeButton.addActionListener(e -> toggleTheme());
-        compararSimulacoesButton.addActionListener(e -> criarGraficoIndividual(simulationsMap));
+        compararSimulacoesButton.addActionListener(e -> criarGraficoMultiplo(simulationsMap));
         downloadExcelButton.addActionListener(e -> fazerDownload());
 
         advancedOptionsButton.addActionListener(e -> {
@@ -321,7 +321,11 @@ public class PriceCalculatorGUI extends JFrame {
     }
 
     private void criarGraficoIndividual(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        GraficoIndividual dialog = new GraficoIndividual(simulationsMap);
+        new GraficoIndividual(simulationsMap);
+    }
+
+    private void criarGraficoMultiplo(Map<Integer, SistemaAmortizacao> simulationsMap) {
+        new GraficoMultiplo(simulationsMap);
     }
 
     private void criarGrafico() {

@@ -81,7 +81,6 @@ public class GraficoIndividual extends JFrame {
         });
 
         GraficoLabels graficoLabel = GraficoLabels.getGraficoLabelByIndex(index);
-
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(graficoLabel.getTitulo(), "Número de Parcelas", graficoLabel.getYLabel(), seriesCollection);
         ChartPanel chartPanel = new ChartPanel(jFreeChart,
                 900, 600,
