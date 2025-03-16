@@ -85,7 +85,7 @@ public abstract class SistemaAmortizacao {
         Double saldoDevedor;
         do {
             saldoDevedor = calcularMes();
-        } while (saldoDevedor > 0);
+        } while (saldoDevedor > 0.001);
 
         opcoesAvancadas.atualizarValorImovel(numeroParcelas);
 
