@@ -267,14 +267,6 @@ public class PriceCalculatorGUI extends JFrame {
         new CompararSimulacoes(simulationsMap);
     }
 
-    private void criarGraficoIndividual(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        new GraficoIndividual(simulationsMap);
-    }
-
-    private void criarGraficoMultiplo(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        new GraficoMultiplo(simulationsMap);
-    }
-
     private void toggleTheme() {
         darkTheme = !darkTheme;
 
