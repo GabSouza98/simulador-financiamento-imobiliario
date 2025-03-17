@@ -8,6 +8,7 @@ import simulador.financiamento.tabela.TableRow;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -17,19 +18,18 @@ import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
-public abstract class SistemaAmortizacao {
+public abstract class SistemaAmortizacao implements Serializable {
 
     protected final String nomeFinanciamento;
     protected final Double valorImovel;
     protected final Double percentualEntrada;
     protected final Double jurosAnual;
     protected final Integer prazo;
-    protected final ExcelWriter excelWriter = new ExcelWriter();
-
-    protected Double taxaJurosMensal;
-    protected Double entrada;
-    protected Double saldoDevedor;
+    protected final Double taxaJurosMensal;
+    protected final Double entrada;
     protected final Double valorFinanciado;
+
+    protected Double saldoDevedor;
     protected Integer numeroParcelas = 0;
 
     protected AmortizacaoExtra amortizacaoExtra;

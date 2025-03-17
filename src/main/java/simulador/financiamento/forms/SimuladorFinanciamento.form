@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="simulador.financiamento.forms.PriceCalculatorGUI">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="simulador.financiamento.forms.SimuladorFinanciamento">
   <grid id="27dc6" binding="contentPane" layout-manager="GridLayoutManager" row-count="10" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -7,7 +7,7 @@
     </constraints>
     <properties>
       <enabled value="true"/>
-      <preferredSize width="1400" height="800"/>
+      <preferredSize width="1500" height="900"/>
     </properties>
     <border type="none"/>
     <children>
@@ -45,7 +45,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="11" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="11" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="right"/>
@@ -59,7 +59,7 @@
                     <children>
                       <component id="afd6c" class="javax.swing.JLabel" binding="valorPagoTotalField">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Valor Pago Total:"/>
@@ -67,7 +67,7 @@
                       </component>
                       <component id="56f94" class="javax.swing.JLabel" binding="numeroParcelasField">
                         <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                             <preferred-size width="-1" height="20"/>
                             <maximum-size width="-1" height="20"/>
                           </grid>
@@ -78,7 +78,7 @@
                       </component>
                       <component id="7fd4a" class="javax.swing.JLabel" binding="ratioValorPagoTotal">
                         <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Valor Pago Total / Valor Imovel:"/>
@@ -92,7 +92,7 @@
                       </vspacer>
                       <component id="b5d40" class="javax.swing.JButton" binding="changeThemeButton">
                         <constraints>
-                          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -103,7 +103,7 @@
                       </component>
                       <component id="5184a" class="javax.swing.JButton" binding="compararSimulacoesButton">
                         <constraints>
-                          <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -114,7 +114,7 @@
                       </component>
                       <component id="e6bdd" class="javax.swing.JButton" binding="downloadExcelButton">
                         <constraints>
-                          <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -145,6 +145,28 @@
                         </constraints>
                         <properties>
                           <text value="Valor Imóvel Inflação:"/>
+                        </properties>
+                      </component>
+                      <component id="4617" class="javax.swing.JButton" binding="saveButton">
+                        <constraints>
+                          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <minimum-size width="200" height="-1"/>
+                            <preferred-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Salvar"/>
+                        </properties>
+                      </component>
+                      <component id="a553b" class="javax.swing.JButton" binding="loadButton">
+                        <constraints>
+                          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <minimum-size width="200" height="-1"/>
+                            <preferred-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value="Carregar"/>
                         </properties>
                       </component>
                     </children>
@@ -779,8 +801,8 @@
                       </component>
                       <vspacer id="ce63d">
                         <constraints>
-                          <grid row="20" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                            <preferred-size width="-1" height="50"/>
+                          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
                           </grid>
                         </constraints>
                       </vspacer>
@@ -812,7 +834,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <tabbedpane id="ea26d" binding="tabs">
+              <tabbedpane id="ea26d" binding="tabs" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="200" height="200"/>

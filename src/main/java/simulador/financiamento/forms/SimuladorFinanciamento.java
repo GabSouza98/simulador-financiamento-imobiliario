@@ -10,6 +10,7 @@ import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.sistemas.amortizacao.PRICE;
 import simulador.financiamento.sistemas.amortizacao.SAC;
 import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.utils.JTabbedPaneCloseButton;
 import simulador.financiamento.utils.SwingUtils;
 
 import javax.swing.*;
@@ -17,11 +18,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class PriceCalculatorGUI extends JFrame {
+public class SimuladorFinanciamento extends JFrame {
 
     private JPanel contentPane;
     private JPanel leftPanel;
@@ -98,17 +100,19 @@ public class PriceCalculatorGUI extends JFrame {
     private JLabel anosConclusaoField;
     private JLabel valorImovelValorizado;
     private JLabel valorImovelInflacao;
+    private JButton saveButton;
+    private JButton loadButton;
 
     private final ExcelWriter excelWriter = new ExcelWriter();
 
     private boolean darkTheme = true;
 
-    private final Map<Integer, SistemaAmortizacao> simulationsMap = new HashMap<>();
+    private Map<Integer, SistemaAmortizacao> simulationsMap = new HashMap<>();
 
     private OpcoesAvancadas opcoesAvancadas = new OpcoesAvancadas(0.0, 0.0);
 
-    public PriceCalculatorGUI() {
-
+    public SimuladorFinanciamento() {
+        $$$setupUI$$$();
         setTitle("Simulador de Financiamentos");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(contentPane);
@@ -118,7 +122,7 @@ public class PriceCalculatorGUI extends JFrame {
         jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         horizontalSplitPane.setLeftComponent(jScrollPane);
-        horizontalSplitPane.setDividerLocation((int) (contentPane.getPreferredSize().getHeight() * 0.61));
+        horizontalSplitPane.setDividerLocation((int) (contentPane.getPreferredSize().getHeight() * 0.6));
 
         pack();
         // Set the frame location to the center of the screen
@@ -135,6 +139,8 @@ public class PriceCalculatorGUI extends JFrame {
         changeThemeButton.addActionListener(e -> toggleTheme());
         compararSimulacoesButton.addActionListener(e -> compararSimulacoes(simulationsMap));
         downloadExcelButton.addActionListener(e -> fazerDownload());
+        saveButton.addActionListener(e -> salvar());
+        loadButton.addActionListener(e -> carregar());
 
         advancedOptionsButton.addActionListener(e -> {
             AdvancedOptionsDialog dialog = new AdvancedOptionsDialog(opcoesAvancadas);
@@ -188,6 +194,47 @@ public class PriceCalculatorGUI extends JFrame {
         setVisible(true);
     }
 
+    private void salvar() {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("simulationsMap.txt");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(simulationsMap);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void carregar() {
+        try {
+            FileInputStream fileInput = new FileInputStream("simulationsMap.txt");
+            ObjectInputStream objectInput = new ObjectInputStream(fileInput);
+
+            simulationsMap = (HashMap) objectInput.readObject();
+
+            objectInput.close();
+            fileInput.close();
+
+            tabs.removeAll();
+
+            simulationsMap.forEach((index, sistemaAmortizacao) -> {
+                JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
+                JScrollPane scrollPane = new JScrollPane(jTable);
+
+                tabs.add(sistemaAmortizacao.getNomeFinanciamento(), scrollPane);
+
+            });
+
+            tabs.setSelectedIndex(tabs.getTabCount() - 1);
+
+//            ((JTabbedPaneCloseButton) tabs).setSimulationsMap(simulationsMap);
+
+        } catch (ClassNotFoundException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void fazerDownload() {
         if (tabs.getTabCount() > 0) {
             int selectedTab = tabs.getSelectedIndex();
@@ -202,6 +249,8 @@ public class PriceCalculatorGUI extends JFrame {
         compararSimulacoesButton.setFont(new Font(compararSimulacoesButton.getFont().getFontName(), Font.PLAIN, 16));
         advancedOptionsButton.setFont(new Font(advancedOptionsButton.getFont().getFontName(), Font.PLAIN, 16));
         downloadExcelButton.setFont(new Font(downloadExcelButton.getFont().getFontName(), Font.PLAIN, 16));
+        saveButton.setFont(new Font(saveButton.getFont().getFontName(), Font.PLAIN, 16));
+        loadButton.setFont(new Font(loadButton.getFont().getFontName(), Font.PLAIN, 16));
     }
 
     private void defineOpcoesSistemasAmortizacao() {
@@ -407,13 +456,8 @@ public class PriceCalculatorGUI extends JFrame {
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
 
         opcoesAvancadas = sistemaAmortizacao.getOpcoesAvancadas();
-    }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
+//        System.out.println(simulationsMap);
     }
 
     /**
@@ -424,10 +468,11 @@ public class PriceCalculatorGUI extends JFrame {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
+        createUIComponents();
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.setEnabled(true);
-        contentPane.setPreferredSize(new Dimension(1400, 800));
+        contentPane.setPreferredSize(new Dimension(1500, 900));
         verticalSplitPlane = new JSplitPane();
         verticalSplitPlane.setOrientation(1);
         contentPane.add(verticalSplitPlane, new GridConstraints(0, 0, 10, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
@@ -440,7 +485,7 @@ public class PriceCalculatorGUI extends JFrame {
         horizontalSplitPane.setOrientation(0);
         leftPanel.add(horizontalSplitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, -1), new Dimension(400, -1), null, 0, false));
         bottomLeftPanel = new JPanel();
-        bottomLeftPanel.setLayout(new GridLayoutManager(11, 2, new Insets(20, 20, 20, 20), -1, -1));
+        bottomLeftPanel.setLayout(new GridLayoutManager(11, 3, new Insets(20, 20, 20, 20), -1, -1));
         bottomLeftPanel.setMaximumSize(new Dimension(2147483647, 300));
         bottomLeftPanel.setMinimumSize(new Dimension(239, 300));
         bottomLeftPanel.setPreferredSize(new Dimension(264, 300));
@@ -448,30 +493,30 @@ public class PriceCalculatorGUI extends JFrame {
         bottomLeftPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         valorPagoTotalField = new JLabel();
         valorPagoTotalField.setText("Valor Pago Total:");
-        bottomLeftPanel.add(valorPagoTotalField, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bottomLeftPanel.add(valorPagoTotalField, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         numeroParcelasField = new JLabel();
         numeroParcelasField.setText("Número de Parcelas / Prazo:");
-        bottomLeftPanel.add(numeroParcelasField, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), new Dimension(-1, 20), 0, false));
+        bottomLeftPanel.add(numeroParcelasField, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), new Dimension(-1, 20), 0, false));
         ratioValorPagoTotal = new JLabel();
         ratioValorPagoTotal.setText("Valor Pago Total / Valor Imovel:");
         ratioValorPagoTotal.setToolTipText(" ");
-        bottomLeftPanel.add(ratioValorPagoTotal, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bottomLeftPanel.add(ratioValorPagoTotal, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         bottomLeftPanel.add(spacer1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         changeThemeButton = new JButton();
         Font changeThemeButtonFont = this.$$$getFont$$$(null, -1, -1, changeThemeButton.getFont());
         if (changeThemeButtonFont != null) changeThemeButton.setFont(changeThemeButtonFont);
         changeThemeButton.setText("Alterar Tema");
-        bottomLeftPanel.add(changeThemeButton, new GridConstraints(7, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(changeThemeButton, new GridConstraints(7, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         compararSimulacoesButton = new JButton();
         Font compararSimulacoesButtonFont = this.$$$getFont$$$(null, -1, -1, compararSimulacoesButton.getFont());
         if (compararSimulacoesButtonFont != null) compararSimulacoesButton.setFont(compararSimulacoesButtonFont);
         compararSimulacoesButton.setText("Comparar Simulações");
-        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(8, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         downloadExcelButton = new JButton();
         downloadExcelButton.setText("Download Excel");
         downloadExcelButton.setVerticalTextPosition(3);
-        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(9, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         anosConclusaoField = new JLabel();
         anosConclusaoField.setText("Quitado em:");
         bottomLeftPanel.add(anosConclusaoField, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -481,6 +526,12 @@ public class PriceCalculatorGUI extends JFrame {
         valorImovelInflacao = new JLabel();
         valorImovelInflacao.setText("Valor Imóvel Inflação:");
         bottomLeftPanel.add(valorImovelInflacao, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setText("Salvar");
+        bottomLeftPanel.add(saveButton, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
+        loadButton = new JButton();
+        loadButton.setText("Carregar");
+        bottomLeftPanel.add(loadButton, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
         upperLeftPanel = new JPanel();
         upperLeftPanel.setLayout(new GridLayoutManager(23, 6, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
@@ -677,7 +728,7 @@ public class PriceCalculatorGUI extends JFrame {
         advancedOptionsButton.setText("Opções Avançadas");
         upperLeftPanel.add(advancedOptionsButton, new GridConstraints(21, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        upperLeftPanel.add(spacer2, new GridConstraints(20, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 50), null, 0, false));
+        upperLeftPanel.add(spacer2, new GridConstraints(20, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 20), null, 0, false));
         calcularButton = new JButton();
         calcularButton.setEnabled(true);
         Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
@@ -689,7 +740,6 @@ public class PriceCalculatorGUI extends JFrame {
         rightPanel = new JPanel();
         rightPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         verticalSplitPlane.setRightComponent(rightPanel);
-        tabs = new JTabbedPane();
         rightPanel.add(tabs, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
     }
 
@@ -722,4 +772,8 @@ public class PriceCalculatorGUI extends JFrame {
         return contentPane;
     }
 
+    private void createUIComponents() {
+//        tabs = new JTabbedPaneCloseButton(simulationsMap);
+        tabs = new JTabbedPane();
+    }
 }

@@ -1,7 +1,7 @@
 package simulador.financiamento;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
-import simulador.financiamento.forms.PriceCalculatorGUI;
+import simulador.financiamento.forms.SimuladorFinanciamento;
 
 import javax.swing.*;
 
@@ -12,8 +12,8 @@ public class MainSwing {
         FlatArcDarkOrangeIJTheme.setup();
 
         SwingUtilities.invokeLater(() -> {
-            PriceCalculatorGUI priceCalculatorGUI = new PriceCalculatorGUI();
-            priceCalculatorGUI.setVisible(true);
+            SimuladorFinanciamento simuladorFinanciamento = new SimuladorFinanciamento();
+            simuladorFinanciamento.setVisible(true);
         });
     }
 }

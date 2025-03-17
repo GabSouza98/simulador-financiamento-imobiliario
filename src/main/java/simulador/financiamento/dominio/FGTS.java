@@ -4,8 +4,10 @@ import lombok.Getter;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
 
+import java.io.Serializable;
+
 @Getter
-public class FGTS {
+public class FGTS implements Serializable {
     private Double saldoAtual;
     private final Double salario;
     private final Double rendimentoAnual = Constants.RENDIMENTO_ANUAL_FGTS; //3%

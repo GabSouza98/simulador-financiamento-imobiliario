@@ -3,9 +3,11 @@ package simulador.financiamento.dominio;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class AmortizacaoExtra {
+public class AmortizacaoExtra implements Serializable {
     private final Double valorExtraInicial;
     private final Double percentProximoValorExtra;
     private final Double valorExtraMinimo;

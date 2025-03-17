@@ -5,9 +5,11 @@ import lombok.Setter;
 import lombok.ToString;
 import simulador.financiamento.utils.Conversor;
 
+import java.io.Serializable;
+
 @Getter
 @ToString
-public class OpcoesAvancadas {
+public class OpcoesAvancadas implements Serializable {
     private final Double inflacao;
     private final Double valorizacao;
 
