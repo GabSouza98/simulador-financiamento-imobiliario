@@ -6,6 +6,15 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.GraficoLabels;
@@ -15,10 +24,8 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class GraficoMultiplo extends JFrame {
     private JPanel graficoMultiploPanel;
@@ -88,13 +95,96 @@ public class GraficoMultiplo extends JFrame {
             }
         });
 
-        graficoIndividualButton.addActionListener(e -> {
-            criarGraficos();
+        graficoIndividualButton.addActionListener(e -> criarGraficos());
+
+        graficoCombinadoButton.addActionListener(e -> criarGraficoCombinado());
+    }
+
+    private void criarGraficoCombinado() {
+
+        NumberAxis xLabel = new NumberAxis("Número de Parcelas");
+        xLabel.setLabelPaint(Color.WHITE);
+        xLabel.setTickLabelPaint(Color.WHITE);
+        final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(xLabel);
+
+        final XYSeriesCollection[] seriesCollection = new XYSeriesCollection[6];
+        for (int i = 0; i < seriesCollection.length; i++) {
+            seriesCollection[i] = new XYSeriesCollection();
+        }
+
+        simulationsMap.forEach((number, sistemaAmortizacao) -> {
+
+            //0 a 5. 0 é o número de parcelas, e de 1 a 5 são os dados relevantes
+            final XYSeries[] series = new XYSeries[6];
+            for (int i = 0; i < series.length; i++) {
+                series[i] = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
+            }
+
+            List<String> tabela = sistemaAmortizacao.getTabela();
+            //Starts at 2 to skip header in table and first row which is 0 in every column
+            for (int i = 2; i < tabela.size(); i++) {
+                String[] row = tabela.get(i).split(",");
+
+                // Dessa maneira, iteramos uma vez só pela tabela, para cada simulação.
+                // Numa rodada já coletamos todos os itens selecionados.
+                selectedIndexes.forEach(index -> {
+                    series[index].add(Double.parseDouble(row[0]), Double.parseDouble(row[index]));
+                });
+            }
+
+            // Adiciona cada série à sua respectiva coleção
+            for (int i = 1; i < seriesCollection.length; i++) {
+                seriesCollection[i].addSeries(series[i]);
+            }
         });
 
-        graficoCombinadoButton.addActionListener(e -> {
+        selectedIndexes.forEach(index -> {
+            final XYItemRenderer renderer = new StandardXYItemRenderer();
 
+            if (index > 1) {
+                var firstCollection = seriesCollection[1];
+
+                var firstRenderer = plot.getSubplots().get(0).getRenderer();
+
+                for (int i = 0; i < firstCollection.getSeriesCount(); i++) {
+                    //www.jfree.org/forum/viewtopic.php?t=30258
+                    //Busca a cor usada em cada série no primeiro gráfico e aplica na série correspondente
+                    renderer.setSeriesPaint(i, firstRenderer.getItemPaint(i, 0));
+                    //Faz com que a legenda não fique visível (não se repita)
+                    renderer.setSeriesVisibleInLegend(i, false);
+                }
+            }
+
+            final NumberAxis rangeY = new NumberAxis(GraficoLabels.getGraficoLabelByIndex(index).getYLabel());
+            rangeY.setLabelPaint(Color.WHITE);
+            rangeY.setTickLabelPaint(Color.WHITE);
+
+            final XYPlot subplot = new XYPlot(seriesCollection[index], null, rangeY, renderer);
+            subplot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+            subplot.setBackgroundPaint(Color.DARK_GRAY);
+
+            plot.add(subplot, 1);
         });
+
+        plot.setGap(10.0);
+        plot.setOrientation(PlotOrientation.VERTICAL);
+
+        JFreeChart chart = new JFreeChart("Gráfico Combinado", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        chart.getTitle().setPaint(Color.WHITE);
+        chart.getLegend().setBackgroundPaint(null);
+        chart.getLegend().setItemPaint(Color.WHITE);
+
+        ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
+        panel.setMouseZoomable(true, false);
+
+        JFrame chartFrame = new JFrame();
+        chartFrame.setMinimumSize(new Dimension(1200, 1000));
+        chartFrame.setTitle("Gráfico Combinado");
+        chartFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        chartFrame.setContentPane(panel);
+        chartFrame.pack();
+        chartFrame.setLocationRelativeTo(null);
+        chartFrame.setVisible(true);
     }
 
     private void criarGraficos() {
