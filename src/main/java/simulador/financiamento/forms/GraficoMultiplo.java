@@ -55,6 +55,12 @@ public class GraficoMultiplo extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
+//        amortizacaoBox.setSelected(true);
+//        parcelaBox.setSelected(true);
+//        valorExtraBox.setSelected(true);
+//        valorPagoBox.setSelected(true);
+//        saldoDevedorBox.setSelected(true);
+
         amortizacaoBox.addActionListener(e -> {
             if (amortizacaoBox.isSelected()) {
                 selectedIndexes.add(1);
@@ -96,12 +102,10 @@ public class GraficoMultiplo extends JFrame {
         });
 
         graficoIndividualButton.addActionListener(e -> criarGraficos());
-
         graficoCombinadoButton.addActionListener(e -> criarGraficoCombinado());
     }
 
     private void criarGraficoCombinado() {
-
         NumberAxis xLabel = new NumberAxis("Número de Parcelas");
         xLabel.setLabelPaint(Color.WHITE);
         xLabel.setTickLabelPaint(Color.WHITE);
@@ -161,7 +165,7 @@ public class GraficoMultiplo extends JFrame {
 
             final XYPlot subplot = new XYPlot(seriesCollection[index], null, rangeY, renderer);
             subplot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-            subplot.setBackgroundPaint(Color.DARK_GRAY);
+            subplot.setBackgroundPaint(Color.WHITE);
 
             plot.add(subplot, 1);
         });

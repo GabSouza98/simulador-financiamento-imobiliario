@@ -9,6 +9,10 @@ public final class Constants {
     public static final double ALIQUOTA_MENSAL_FGTS = 8.0;
 
     public static final String HEADER_ROW = "Num Prestacao,Amortizacao,Parcela,Valor Extra,Valor Pago Mensal,Saldo Devedor";
-    public static final String[] COLUMN_NAMES = {"Num Prestacao","Amortizacao","Parcela","Valor Extra","Valor Pago Mensal","Saldo Devedor"};
+    public static final String[] SIMULATION_COLUMN_NAMES = {"Num Prestacao","Amortizacao","Parcela","Valor Extra","Valor Pago Mensal","Saldo Devedor"};
+
+    public static final String[] COMPARISON_COLUMN_NAMES = {"Nome","Nº Parcelas","Valor Imóvel","Valor Pago","VP/VI","Valorização","Inflação"};
+
+
 
 }

@@ -5,32 +5,19 @@ import com.formdev.flatlaf.intellijthemes.FlatArcOrangeIJTheme;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.*;
 import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.sistemas.amortizacao.PRICE;
 import simulador.financiamento.sistemas.amortizacao.SAC;
 import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
-import simulador.financiamento.tabela.TableRow;
-import simulador.financiamento.utils.Constants;
+import simulador.financiamento.utils.SwingUtils;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -146,7 +133,7 @@ public class PriceCalculatorGUI extends JFrame {
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
         changeThemeButton.addActionListener(e -> toggleTheme());
-        compararSimulacoesButton.addActionListener(e -> criarGraficoMultiplo(simulationsMap));
+        compararSimulacoesButton.addActionListener(e -> compararSimulacoes(simulationsMap));
         downloadExcelButton.addActionListener(e -> fazerDownload());
 
         advancedOptionsButton.addActionListener(e -> {
@@ -276,48 +263,8 @@ public class PriceCalculatorGUI extends JFrame {
         saldoFGTS.setText("0");
     }
 
-    private void criarGraficoStackOverflow() {
-        //create the series - add some dummy data
-        XYSeries series1 = new XYSeries("series1");
-        XYSeries series2 = new XYSeries("series2");
-        series1.add(1000, 1000);
-        series1.add(1150, 1150);
-        series1.add(1250, 1250);
-
-        series2.add(1000, 111250);
-        series2.add(1150, 211250);
-        series2.add(1250, 311250);
-
-        //create the datasets
-        XYSeriesCollection dataset1 = new XYSeriesCollection();
-        XYSeriesCollection dataset2 = new XYSeriesCollection();
-        dataset1.addSeries(series1);
-        dataset2.addSeries(series2);
-
-        //construct the plot
-        XYPlot plot = new XYPlot();
-        plot.setDataset(0, dataset1);
-        plot.setDataset(1, dataset2);
-
-        //customize the plot with renderers and axis
-        plot.setRenderer(0, new XYSplineRenderer());//use default fill paint for first series
-        XYSplineRenderer splinerenderer = new XYSplineRenderer();
-        splinerenderer.setSeriesFillPaint(0, Color.BLUE);
-        plot.setRenderer(1, splinerenderer);
-        plot.setRangeAxis(0, new NumberAxis("Series 1"));
-        plot.setRangeAxis(1, new NumberAxis("Series 2"));
-        plot.setDomainAxis(new NumberAxis("X Axis"));
-
-        //Map the data to the appropriate axis
-        plot.mapDatasetToRangeAxis(0, 0);
-        plot.mapDatasetToRangeAxis(1, 1);
-
-        //generate the chart
-        JFreeChart chart = new JFreeChart("MyPlot", getFont(), plot, true);
-        chart.setBackgroundPaint(Color.WHITE);
-        ChartPanel chartPanel = new ChartPanel(chart);
-
-        showChart("Stack overflow", chartPanel);
+    private void compararSimulacoes(Map<Integer, SistemaAmortizacao> simulationsMap) {
+        new CompararSimulacoes(simulationsMap);
     }
 
     private void criarGraficoIndividual(Map<Integer, SistemaAmortizacao> simulationsMap) {
@@ -326,49 +273,6 @@ public class PriceCalculatorGUI extends JFrame {
 
     private void criarGraficoMultiplo(Map<Integer, SistemaAmortizacao> simulationsMap) {
         new GraficoMultiplo(simulationsMap);
-    }
-
-    private void criarGrafico() {
-        XYSeriesCollection datasetSaldoDevedor = new XYSeriesCollection();
-        XYSeriesCollection datasetAmortizacao = new XYSeriesCollection();
-
-        simulationsMap.forEach((number, sistemaAmortizacao) -> {
-            XYSeries serieSaldoDevedor = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
-            XYSeries serieAmortizacao = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
-
-            List<String> tabela = sistemaAmortizacao.getTabela();
-            //Starts at 1 to skip header in priceTable
-            for (int i = 1; i < tabela.size(); i++) {
-                String[] row = tabela.get(i).split(",");
-
-                serieSaldoDevedor.add(Double.parseDouble(row[0]), Double.parseDouble(row[5]));
-                serieAmortizacao.add(Double.parseDouble(row[0]), Double.parseDouble(row[1]));
-            }
-
-            datasetSaldoDevedor.addSeries(serieSaldoDevedor);
-            datasetAmortizacao.addSeries(serieAmortizacao);
-
-        });
-
-        JFreeChart jFreeChart = ChartFactory.createXYLineChart("Saldo Devedor x Número de Parcelas", "Número de Parcelas", "Saldo Devedor", datasetSaldoDevedor);
-        ChartPanel chartPanel = new ChartPanel(jFreeChart, true, true, true, true, true);
-
-        JFreeChart jFreeChart2 = ChartFactory.createXYLineChart("Amortização x Número de Parcelas", "Número de Parcelas", "Amortização", datasetAmortizacao);
-        ChartPanel chartPanel2 = new ChartPanel(jFreeChart2, true, true, true, true, true);
-
-        showChart("Comparação de Simulações - Saldo Devedor", chartPanel);
-        showChart("Comparação de Simulações - Amortização", chartPanel2);
-    }
-
-    private void showChart(String name, ChartPanel chartPanel) {
-        JFrame dialogFrame = new JFrame();
-        dialogFrame.setMinimumSize(new Dimension(1100, 700));
-        dialogFrame.setTitle(name);
-        dialogFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        dialogFrame.setContentPane(chartPanel);
-        dialogFrame.pack();
-        dialogFrame.setLocationRelativeTo(null);
-        dialogFrame.setVisible(true);
     }
 
     private void toggleTheme() {
@@ -392,11 +296,6 @@ public class PriceCalculatorGUI extends JFrame {
 
         SistemaAmortizacao sistemaAmortizacao = getSistemaAmortizacao((String) sistemaAmortizacaoComboBox.getSelectedItem());
 
-//        SistemaAmortizacao sistemaAmortizacao = new PRICE("SBPE",
-//                200_000.0, 30.0, 10.16, 1250.91,
-//                350.0, 100.0, 350.0,
-//                new RendimentoPassivo(40_000.0, 9.3), new FGTS(0.0, 0.0));
-
         sistemaAmortizacao.calcularFinanciamento();
 
         valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %,.2f", sistemaAmortizacao.getValorPagoTotal()));
@@ -406,7 +305,7 @@ public class PriceCalculatorGUI extends JFrame {
         valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
 
-        JTable jTable = getjTable(sistemaAmortizacao);
+        JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
         JScrollPane scrollPane = new JScrollPane(jTable);
 
         tabs.add(nomeFinanciamento.getText(), scrollPane);
@@ -417,70 +316,6 @@ public class PriceCalculatorGUI extends JFrame {
         if (resetarCamposBox.isSelected()) {
             resetFields();
         }
-    }
-
-    private JTable getjTable(SistemaAmortizacao sistemaAmortizacao) {
-        // Column Names
-        final String[] columnNames = Constants.COLUMN_NAMES;
-        List<String> tabela = sistemaAmortizacao.getTabela();
-        List<TableRow> linhasTabela = sistemaAmortizacao.getLinhasTabela();
-
-        //Starts at 1 to skip header
-        String[][] data = new String[tabela.size() - 1][columnNames.length];
-        for (int i = 1; i < tabela.size(); i++) {
-            //Usando a tabela de string
-            String[] row = tabela.get(i).split(",");
-            data[i - 1] = row;
-        }
-
-//        String[][] data = new String[linhasTabela.size()][columnNames.length];
-//        for (int i = 0; i < linhasTabela.size(); i++) {
-//            //Usando a tabela tipada
-//            TableRow tableRow = linhasTabela.get(i);
-//            String[] row = new String[columnNames.length];
-//            row[0] = String.valueOf(tableRow.getNumeroParcelas());
-//            row[1] = String.valueOf(tableRow.getValorParcela());
-//            row[2] = String.valueOf(tableRow.getValorExtra());
-//            row[3] = String.valueOf(tableRow.getValorPagoMensal());
-//            row[4] = String.valueOf(tableRow.getSaldoDevedor());
-//            data[i] = row;
-//        }
-
-//        priceJTable.getTableHeader().setPreferredSize(new Dimension(100, 30));
-//        priceJTable.getTableHeader().setFont(new Font("Calibri", Font.BOLD, 22));
-//        priceJTable.setRowHeight(26);
-
-        Class[] types = new Class[columnNames.length];
-
-        for (int i = 0; i < columnNames.length; i++) {
-            types[i] = String.class;
-        }
-
-        var jTable = new JTable();
-        jTable.setShowHorizontalLines(true);
-        jTable.setShowVerticalLines(true);
-        jTable.setModel(
-                new DefaultTableModel(data, columnNames) {
-
-                    final boolean[] canEdit = new boolean[]{false, false, false, false, false, false};
-
-                    @Override
-                    public Class getColumnClass(int columnIndex) {
-                        return types[columnIndex];
-                    }
-
-                    @Override
-                    public boolean isCellEditable(int rowIndex, int columnIndex) {
-                        return canEdit[columnIndex];
-                    }
-                }
-        );
-
-        jTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        jTable.setDefaultRenderer(String.class, centerRenderer);
-        return jTable;
     }
 
     private SistemaAmortizacao getSistemaAmortizacao(String sistemaSelecionado) {
