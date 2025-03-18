@@ -8,13 +8,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.GraficoLabels;
@@ -36,17 +34,18 @@ public class GraficoMultiplo extends JFrame {
     private JCheckBox valorExtraBox;
     private JCheckBox valorPagoBox;
     private JCheckBox saldoDevedorBox;
+    private JCheckBox jurosBox;
     private JPanel itensPanel;
     private JButton graficoIndividualButton;
     private JButton graficoCombinadoButton;
     private JPanel buttonsPanel;
 
-    private final Map<Integer, SistemaAmortizacao> simulationsMap;
+    private final ArrayList<SistemaAmortizacao> simulationsList;
 
     private final ArrayList<Integer> selectedIndexes = new ArrayList<>();
 
-    public GraficoMultiplo(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        this.simulationsMap = simulationsMap;
+    public GraficoMultiplo(ArrayList<SistemaAmortizacao> simulationsList) {
+        this.simulationsList = simulationsList;
         setContentPane(graficoMultiploPanel);
         setTitle("Gráfico Múltiplo");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -55,11 +54,17 @@ public class GraficoMultiplo extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-//        amortizacaoBox.setSelected(true);
-//        parcelaBox.setSelected(true);
-//        valorExtraBox.setSelected(true);
-//        valorPagoBox.setSelected(true);
-//        saldoDevedorBox.setSelected(true);
+        amortizacaoBox.setSelected(true);
+        jurosBox.setSelected(true);
+        parcelaBox.setSelected(true);
+        valorExtraBox.setSelected(false);
+        valorPagoBox.setSelected(false);
+        saldoDevedorBox.setSelected(true);
+
+        selectedIndexes.add(1);
+        selectedIndexes.add(2);
+        selectedIndexes.add(3);
+        selectedIndexes.add(6);
 
         amortizacaoBox.addActionListener(e -> {
             if (amortizacaoBox.isSelected()) {
@@ -69,35 +74,43 @@ public class GraficoMultiplo extends JFrame {
             }
         });
 
-        parcelaBox.addActionListener(e -> {
-            if (parcelaBox.isSelected()) {
+        jurosBox.addActionListener(e -> {
+            if (jurosBox.isSelected()) {
                 selectedIndexes.add(2);
             } else {
                 selectedIndexes.remove((Object) 2);
             }
         });
 
-        valorExtraBox.addActionListener(e -> {
-            if (valorExtraBox.isSelected()) {
+        parcelaBox.addActionListener(e -> {
+            if (parcelaBox.isSelected()) {
                 selectedIndexes.add(3);
             } else {
                 selectedIndexes.remove((Object) 3);
             }
         });
 
-        valorPagoBox.addActionListener(e -> {
-            if (valorPagoBox.isSelected()) {
+        valorExtraBox.addActionListener(e -> {
+            if (valorExtraBox.isSelected()) {
                 selectedIndexes.add(4);
             } else {
                 selectedIndexes.remove((Object) 4);
             }
         });
 
-        saldoDevedorBox.addActionListener(e -> {
-            if (saldoDevedorBox.isSelected()) {
+        valorPagoBox.addActionListener(e -> {
+            if (valorPagoBox.isSelected()) {
                 selectedIndexes.add(5);
             } else {
                 selectedIndexes.remove((Object) 5);
+            }
+        });
+
+        saldoDevedorBox.addActionListener(e -> {
+            if (saldoDevedorBox.isSelected()) {
+                selectedIndexes.add(6);
+            } else {
+                selectedIndexes.remove((Object) 6);
             }
         });
 
@@ -111,15 +124,16 @@ public class GraficoMultiplo extends JFrame {
         xLabel.setTickLabelPaint(Color.WHITE);
         final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(xLabel);
 
-        final XYSeriesCollection[] seriesCollection = new XYSeriesCollection[6];
+        //Ao total pode haver 7 coleções
+        final XYSeriesCollection[] seriesCollection = new XYSeriesCollection[7];
         for (int i = 0; i < seriesCollection.length; i++) {
             seriesCollection[i] = new XYSeriesCollection();
         }
 
-        simulationsMap.forEach((number, sistemaAmortizacao) -> {
+        simulationsList.forEach((sistemaAmortizacao) -> {
 
-            //0 a 5. 0 é o número de parcelas, e de 1 a 5 são os dados relevantes
-            final XYSeries[] series = new XYSeries[6];
+            //0 a 6. 0 é o número de parcelas, e de 1 a 6 são os dados relevantes
+            final XYSeries[] series = new XYSeries[7];
             for (int i = 0; i < series.length; i++) {
                 series[i] = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
             }
@@ -146,15 +160,15 @@ public class GraficoMultiplo extends JFrame {
             final XYItemRenderer renderer = new StandardXYItemRenderer();
 
             if (index > 1) {
-                var firstCollection = seriesCollection[1];
+                var firstCollection = seriesCollection[1]; //a seriesCollection[0] guarda o número de prestações e não é utilizado.
 
                 var firstRenderer = plot.getSubplots().get(0).getRenderer();
 
-                for (int i = 0; i < firstCollection.getSeriesCount(); i++) {
+                for (int i = 0; i < firstCollection.getSeriesCount(); i++) { //firstCollection.getSeriesCount() também é igual a simulationsList.size()
                     //www.jfree.org/forum/viewtopic.php?t=30258
                     //Busca a cor usada em cada série no primeiro gráfico e aplica na série correspondente
                     renderer.setSeriesPaint(i, firstRenderer.getItemPaint(i, 0));
-                    //Faz com que a legenda não fique visível (não se repita)
+                    //Faz com que a legenda não fique visível (não se repita), pois ela tem sempre o mesmo nome para cada série (sistemaAmortizacao.getNomeFinanciamento())
                     renderer.setSeriesVisibleInLegend(i, false);
                 }
             }
@@ -198,7 +212,7 @@ public class GraficoMultiplo extends JFrame {
     private void criarGrafico(int index) {
         XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
-        simulationsMap.forEach((number, sistemaAmortizacao) -> {
+        simulationsList.forEach((sistemaAmortizacao) -> {
             XYSeries series = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
 
             List<String> tabela = sistemaAmortizacao.getTabela();
@@ -258,27 +272,30 @@ public class GraficoMultiplo extends JFrame {
         containerPanel.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), -1, -1));
         graficoMultiploPanel.add(containerPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, -1), new Dimension(400, -1), new Dimension(400, 300), 0, false));
         itensPanel = new JPanel();
-        itensPanel.setLayout(new GridLayoutManager(7, 1, new Insets(0, 0, 0, 0), -1, -1));
+        itensPanel.setLayout(new GridLayoutManager(8, 1, new Insets(0, 0, 0, 0), -1, -1));
         containerPanel.add(itensPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(150, -1), new Dimension(150, 189), new Dimension(150, -1), 0, false));
         amortizacaoBox = new JCheckBox();
         amortizacaoBox.setText("Amortização");
         itensPanel.add(amortizacaoBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        itensPanel.add(spacer1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        itensPanel.add(spacer1, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         parcelaBox = new JCheckBox();
         parcelaBox.setText("Parcela");
-        itensPanel.add(parcelaBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        itensPanel.add(parcelaBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         valorExtraBox = new JCheckBox();
         valorExtraBox.setText("Valor Extra");
-        itensPanel.add(valorExtraBox, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        itensPanel.add(valorExtraBox, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         valorPagoBox = new JCheckBox();
         valorPagoBox.setText("Valor Pago");
-        itensPanel.add(valorPagoBox, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        itensPanel.add(valorPagoBox, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saldoDevedorBox = new JCheckBox();
         saldoDevedorBox.setText("Saldo Devedor");
-        itensPanel.add(saldoDevedorBox, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        itensPanel.add(saldoDevedorBox, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         itensPanel.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        jurosBox = new JCheckBox();
+        jurosBox.setText("Júros");
+        itensPanel.add(jurosBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
         containerPanel.add(buttonsPanel, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(200, -1), new Dimension(200, -1), new Dimension(200, -1), 0, false));

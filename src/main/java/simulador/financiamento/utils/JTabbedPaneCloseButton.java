@@ -7,16 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Setter
 public class JTabbedPaneCloseButton extends JTabbedPane {
 
-    private Map<Integer, SistemaAmortizacao> simulationsMap;
+    private ArrayList<SistemaAmortizacao> simulationsList;
 
-    public JTabbedPaneCloseButton(Map<Integer, SistemaAmortizacao> simulationsMap) {
+    public JTabbedPaneCloseButton(ArrayList<SistemaAmortizacao> simulationsList) {
         super();
-        this.simulationsMap = simulationsMap;
+        this.simulationsList = simulationsList;
     }
 
     /* Override Addtab in order to add the close Button everytime */
@@ -83,7 +84,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
                 tabbedPane.remove(tab);
 
                 //remove o índice do map
-                simulationsMap.remove(selectedIndex);
+                simulationsList.remove(selectedIndex);
             }
         }
 

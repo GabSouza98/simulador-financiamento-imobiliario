@@ -12,8 +12,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 public class CompararSimulacoes extends JFrame {
     private JPanel compararSimulacoesPanel;
@@ -23,16 +23,16 @@ public class CompararSimulacoes extends JFrame {
     private JButton graficoIndividualButton;
     private JButton graficoCombinadoButton;
 
-    public CompararSimulacoes(Map<Integer, SistemaAmortizacao> simulationsMap) {
+    public CompararSimulacoes(ArrayList<SistemaAmortizacao> simulationsList) {
         setContentPane(compararSimulacoesPanel);
-        setTitle("Comparar Simuações");
+        setTitle("Comparar Simulações");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
 
-        JTable jTable = getComparisonJTable(simulationsMap);
+        JTable jTable = getComparisonJTable(simulationsList);
         JScrollPane scrollPane = new JScrollPane(jTable);
 
         tablePanel.removeAll();
@@ -40,20 +40,20 @@ public class CompararSimulacoes extends JFrame {
         tablePanel.revalidate();
         tablePanel.repaint();
 
-        graficoIndividualButton.addActionListener(e -> new GraficoIndividual(simulationsMap));
-        graficoCombinadoButton.addActionListener(e -> new GraficoMultiplo(simulationsMap));
+        graficoIndividualButton.addActionListener(e -> new GraficoIndividual(simulationsList));
+        graficoCombinadoButton.addActionListener(e -> new GraficoMultiplo(simulationsList));
     }
 
-    private JTable getComparisonJTable(Map<Integer, SistemaAmortizacao> simulationsMap) {
+    private JTable getComparisonJTable(ArrayList<SistemaAmortizacao> simulationsList) {
         // Column Names
         final String[] columnNames = Constants.COMPARISON_COLUMN_NAMES;
 
-        String[][] data = new String[simulationsMap.size()][columnNames.length];
+        String[][] data = new String[simulationsList.size()][columnNames.length];
 
-        for (int i = 0; i < simulationsMap.size(); i++) {
+        for (int i = 0; i < simulationsList.size(); i++) {
             String[] row = new String[columnNames.length];
 
-            SistemaAmortizacao sistemaAmortizacao = simulationsMap.get(i);
+            SistemaAmortizacao sistemaAmortizacao = simulationsList.get(i);
 
             row[0] = sistemaAmortizacao.getNomeFinanciamento();
             row[1] = String.valueOf(sistemaAmortizacao.getNumeroParcelas());

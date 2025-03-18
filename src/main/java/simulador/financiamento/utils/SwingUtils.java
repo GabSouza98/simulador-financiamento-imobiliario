@@ -1,7 +1,6 @@
 package simulador.financiamento.utils;
 
 import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
-import simulador.financiamento.tabela.TableRow;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -15,7 +14,6 @@ public class SwingUtils {
         // Column Names
         final String[] columnNames = Constants.SIMULATION_COLUMN_NAMES;
         List<String> tabela = sistemaAmortizacao.getTabela();
-        List<TableRow> linhasTabela = sistemaAmortizacao.getLinhasTabela();
 
         //Starts at 1 to skip header
         String[][] data = new String[tabela.size() - 1][columnNames.length];
@@ -24,23 +22,6 @@ public class SwingUtils {
             String[] row = tabela.get(i).split(",");
             data[i - 1] = row;
         }
-
-//        String[][] data = new String[linhasTabela.size()][columnNames.length];
-//        for (int i = 0; i < linhasTabela.size(); i++) {
-//            //Usando a tabela tipada
-//            TableRow tableRow = linhasTabela.get(i);
-//            String[] row = new String[columnNames.length];
-//            row[0] = String.valueOf(tableRow.getNumeroParcelas());
-//            row[1] = String.valueOf(tableRow.getValorParcela());
-//            row[2] = String.valueOf(tableRow.getValorExtra());
-//            row[3] = String.valueOf(tableRow.getValorPagoMensal());
-//            row[4] = String.valueOf(tableRow.getSaldoDevedor());
-//            data[i] = row;
-//        }
-
-//        priceJTable.getTableHeader().setPreferredSize(new Dimension(100, 30));
-//        priceJTable.getTableHeader().setFont(new Font("Calibri", Font.BOLD, 22));
-//        priceJTable.setRowHeight(26);
 
         Class[] types = new Class[columnNames.length];
 

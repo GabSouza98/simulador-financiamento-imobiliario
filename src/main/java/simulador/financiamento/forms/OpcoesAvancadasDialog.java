@@ -6,17 +6,12 @@ import com.intellij.uiDesigner.core.Spacer;
 import simulador.financiamento.dominio.OpcoesAvancadas;
 
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Locale;
-import java.util.Objects;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
-public class AdvancedOptionsDialog extends JDialog {
+public class OpcoesAvancadasDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -31,7 +26,7 @@ public class AdvancedOptionsDialog extends JDialog {
 
     private OpcoesAvancadas opcoesAvancadas;
 
-    public AdvancedOptionsDialog(OpcoesAvancadas opcoesAvancadas) {
+    public OpcoesAvancadasDialog(OpcoesAvancadas opcoesAvancadas) {
         this.opcoesAvancadas = opcoesAvancadas;
 
         setContentPane(contentPane);

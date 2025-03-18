@@ -19,9 +19,8 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.io.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 public class SimuladorFinanciamento extends JFrame {
 
@@ -107,7 +106,7 @@ public class SimuladorFinanciamento extends JFrame {
 
     private boolean darkTheme = true;
 
-    private Map<Integer, SistemaAmortizacao> simulationsMap = new HashMap<>();
+    private ArrayList<SistemaAmortizacao> simulationsList = new ArrayList<>();
 
     private OpcoesAvancadas opcoesAvancadas = new OpcoesAvancadas(0.0, 0.0);
 
@@ -137,13 +136,13 @@ public class SimuladorFinanciamento extends JFrame {
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
         changeThemeButton.addActionListener(e -> toggleTheme());
-        compararSimulacoesButton.addActionListener(e -> compararSimulacoes(simulationsMap));
+        compararSimulacoesButton.addActionListener(e -> compararSimulacoes(simulationsList));
         downloadExcelButton.addActionListener(e -> fazerDownload());
         saveButton.addActionListener(e -> salvar());
         loadButton.addActionListener(e -> carregar());
 
         advancedOptionsButton.addActionListener(e -> {
-            AdvancedOptionsDialog dialog = new AdvancedOptionsDialog(opcoesAvancadas);
+            OpcoesAvancadasDialog dialog = new OpcoesAvancadasDialog(opcoesAvancadas);
             dialog.setMinimumSize(new Dimension(400, 200));
             dialog.setTitle("Opções Avançadas");
             dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -155,9 +154,9 @@ public class SimuladorFinanciamento extends JFrame {
         });
 
         tabs.addChangeListener(e -> {
-            if (!simulationsMap.isEmpty() && simulationsMap.size() == tabs.getTabCount()) {
+            if (!simulationsList.isEmpty() && simulationsList.size() == tabs.getTabCount()) {
                 int selectedTab = tabs.getSelectedIndex();
-                SistemaAmortizacao sistemaAmortizacao = simulationsMap.get(selectedTab);
+                SistemaAmortizacao sistemaAmortizacao = simulationsList.get(selectedTab);
                 updateFields(sistemaAmortizacao);
             }
         });
@@ -196,11 +195,14 @@ public class SimuladorFinanciamento extends JFrame {
 
     private void salvar() {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("simulationsMap.txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("simulationsList.txt");
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(simulationsMap);
+            objectOutputStream.writeObject(simulationsList);
             objectOutputStream.close();
             fileOutputStream.close();
+
+            new InformacaoDialog("Dados Salvos", "Dados salvos com sucesso!");
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -208,28 +210,29 @@ public class SimuladorFinanciamento extends JFrame {
 
     private void carregar() {
         try {
-            FileInputStream fileInput = new FileInputStream("simulationsMap.txt");
+            FileInputStream fileInput = new FileInputStream("simulationsList.txt");
             ObjectInputStream objectInput = new ObjectInputStream(fileInput);
 
-            simulationsMap = (HashMap) objectInput.readObject();
+            simulationsList = (ArrayList<SistemaAmortizacao>) objectInput.readObject();
 
             objectInput.close();
             fileInput.close();
 
             tabs.removeAll();
 
-            simulationsMap.forEach((index, sistemaAmortizacao) -> {
+            simulationsList.forEach((sistemaAmortizacao) -> {
                 JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
                 JScrollPane scrollPane = new JScrollPane(jTable);
 
                 tabs.add(sistemaAmortizacao.getNomeFinanciamento(), scrollPane);
-
             });
 
             tabs.setSelectedIndex(tabs.getTabCount() - 1);
 
-//            ((JTabbedPaneCloseButton) tabs).setSimulationsMap(simulationsMap);
+            ((JTabbedPaneCloseButton) tabs).setSimulationsList(simulationsList);
 
+        } catch (FileNotFoundException e) {
+            new InformacaoDialog("Erro ao carregar", "O sistema não pode encontrar o arquivo especificado.");
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -238,7 +241,7 @@ public class SimuladorFinanciamento extends JFrame {
     private void fazerDownload() {
         if (tabs.getTabCount() > 0) {
             int selectedTab = tabs.getSelectedIndex();
-            SistemaAmortizacao sistemaAmortizacao = simulationsMap.get(selectedTab);
+            SistemaAmortizacao sistemaAmortizacao = simulationsList.get(selectedTab);
             excelWriter.writeTable(sistemaAmortizacao);
         }
     }
@@ -312,8 +315,8 @@ public class SimuladorFinanciamento extends JFrame {
         saldoFGTS.setText("0");
     }
 
-    private void compararSimulacoes(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        new CompararSimulacoes(simulationsMap);
+    private void compararSimulacoes(ArrayList<SistemaAmortizacao> simulationsList) {
+        new CompararSimulacoes(simulationsList);
     }
 
     private void toggleTheme() {
@@ -352,7 +355,7 @@ public class SimuladorFinanciamento extends JFrame {
         tabs.add(nomeFinanciamento.getText(), scrollPane);
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
 
-        simulationsMap.put(tabs.getSelectedIndex(), sistemaAmortizacao);
+        simulationsList.add(sistemaAmortizacao);
 
         if (resetarCamposBox.isSelected()) {
             resetFields();
@@ -457,7 +460,7 @@ public class SimuladorFinanciamento extends JFrame {
 
         opcoesAvancadas = sistemaAmortizacao.getOpcoesAvancadas();
 
-//        System.out.println(simulationsMap);
+//        System.out.println(simulationsList);
     }
 
     /**
@@ -773,7 +776,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private void createUIComponents() {
-//        tabs = new JTabbedPaneCloseButton(simulationsMap);
-        tabs = new JTabbedPane();
+        tabs = new JTabbedPaneCloseButton(simulationsList);
+//        tabs = new JTabbedPane();
     }
 }

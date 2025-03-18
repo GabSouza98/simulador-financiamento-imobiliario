@@ -25,7 +25,7 @@
           <text value="Selecione o tipo de gráfico"/>
         </properties>
       </component>
-      <grid id="b7a82" binding="buttonsGroup" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="b7a82" binding="buttonsGroup" layout-manager="GridLayoutManager" row-count="1" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
@@ -45,7 +45,7 @@
           </component>
           <component id="425ba" class="javax.swing.JRadioButton" binding="parcelaRadio">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Parcela"/>
@@ -53,7 +53,7 @@
           </component>
           <component id="92b09" class="javax.swing.JRadioButton" binding="valorExtraRadio">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Valor Extra"/>
@@ -61,7 +61,7 @@
           </component>
           <component id="c912d" class="javax.swing.JRadioButton" binding="valorPagoRadio">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Valor Pago"/>
@@ -69,7 +69,7 @@
           </component>
           <component id="59009" class="javax.swing.JRadioButton" binding="saldoDevedorRadio">
             <constraints>
-              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Saldo Devedor"/>
@@ -82,9 +82,17 @@
           </hspacer>
           <hspacer id="143a0">
             <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <component id="2c24" class="javax.swing.JRadioButton" binding="jurosRadio">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Júros"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="ce16d" binding="graficoPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">

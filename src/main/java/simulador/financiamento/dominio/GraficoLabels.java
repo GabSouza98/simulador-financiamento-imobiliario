@@ -10,10 +10,11 @@ import java.util.Arrays;
 public enum GraficoLabels {
 
     AMORTIZACAO(1, "Amortização x Número de Parcelas", "Amortização"),
-    PARCELA(2, "Valor Parcela x Número de Parcelas", "Valor Parcela"),
-    VALOR_EXTRA(3, "Valor Extra x Número de Parcelas", "Valor Extra"),
-    VALOR_PAGO(4, "Valor Pago x Número de Parcelas", "Valor Pago"),
-    SALDO_DEVEDOR(5, "Saldo Devedor x Número de Parcelas", "Saldo Devedor");
+    JUROS(2, "Valor Júros x Número de Parcelas", "Valor Júros"),
+    PARCELA(3, "Valor Parcela x Número de Parcelas", "Valor Parcela"),
+    VALOR_EXTRA(4, "Valor Extra x Número de Parcelas", "Valor Extra"),
+    VALOR_PAGO(5, "Valor Pago x Número de Parcelas", "Valor Pago"),
+    SALDO_DEVEDOR(6, "Saldo Devedor x Número de Parcelas", "Saldo Devedor");
 
     private final int index;
     private final String titulo;

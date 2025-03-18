@@ -15,9 +15,9 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class GraficoIndividual extends JFrame {
     private JPanel buttonsGroup;
@@ -26,16 +26,17 @@ public class GraficoIndividual extends JFrame {
     private JRadioButton valorExtraRadio;
     private JRadioButton valorPagoRadio;
     private JRadioButton saldoDevedorRadio;
+    private JRadioButton jurosRadio;
     private JPanel graficoPanel;
     private JLabel selecioneGraficoLabel;
     private JPanel graficoIndividualPanel;
 
     private ButtonGroup buttonGroup;
 
-    private final Map<Integer, SistemaAmortizacao> simulationsMap;
+    private final ArrayList<SistemaAmortizacao> simulationsList;
 
-    public GraficoIndividual(Map<Integer, SistemaAmortizacao> simulationsMap) {
-        this.simulationsMap = simulationsMap;
+    public GraficoIndividual(ArrayList<SistemaAmortizacao> simulationsList) {
+        this.simulationsList = simulationsList;
         setContentPane(graficoIndividualPanel);
         setTitle("Gráfico Individual");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -50,14 +51,16 @@ public class GraficoIndividual extends JFrame {
         buttonGroup.add(valorExtraRadio);
         buttonGroup.add(valorPagoRadio);
         buttonGroup.add(saldoDevedorRadio);
+        buttonGroup.add(jurosRadio);
 
         amortizacaoRadio.setSelected(true);
 
         amortizacaoRadio.addActionListener(e -> criarGrafico(1));
-        parcelaRadio.addActionListener(e -> criarGrafico(2));
-        valorExtraRadio.addActionListener(e -> criarGrafico(3));
-        valorPagoRadio.addActionListener(e -> criarGrafico(4));
-        saldoDevedorRadio.addActionListener(e -> criarGrafico(5));
+        jurosRadio.addActionListener(e -> criarGrafico(2));
+        parcelaRadio.addActionListener(e -> criarGrafico(3));
+        valorExtraRadio.addActionListener(e -> criarGrafico(4));
+        valorPagoRadio.addActionListener(e -> criarGrafico(5));
+        saldoDevedorRadio.addActionListener(e -> criarGrafico(6));
 
         criarGrafico(1);
     }
@@ -65,7 +68,7 @@ public class GraficoIndividual extends JFrame {
     public void criarGrafico(int index) {
         XYSeriesCollection seriesCollection = new XYSeriesCollection();
 
-        simulationsMap.forEach((number, sistemaAmortizacao) -> {
+        simulationsList.forEach((sistemaAmortizacao) -> {
             XYSeries series = new XYSeries(sistemaAmortizacao.getNomeFinanciamento());
 
             List<String> tabela = sistemaAmortizacao.getTabela();
@@ -122,27 +125,30 @@ public class GraficoIndividual extends JFrame {
         selecioneGraficoLabel.setText("Selecione o tipo de gráfico");
         graficoIndividualPanel.add(selecioneGraficoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 30), new Dimension(-1, 30), null, 0, false));
         buttonsGroup = new JPanel();
-        buttonsGroup.setLayout(new GridLayoutManager(1, 7, new Insets(0, 0, 0, 0), -1, -1));
+        buttonsGroup.setLayout(new GridLayoutManager(1, 8, new Insets(0, 0, 0, 0), -1, -1));
         graficoIndividualPanel.add(buttonsGroup, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(564, 30), null, 0, false));
         amortizacaoRadio = new JRadioButton();
         amortizacaoRadio.setText("Amortização");
         buttonsGroup.add(amortizacaoRadio, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         parcelaRadio = new JRadioButton();
         parcelaRadio.setText("Parcela");
-        buttonsGroup.add(parcelaRadio, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonsGroup.add(parcelaRadio, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         valorExtraRadio = new JRadioButton();
         valorExtraRadio.setText("Valor Extra");
-        buttonsGroup.add(valorExtraRadio, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonsGroup.add(valorExtraRadio, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         valorPagoRadio = new JRadioButton();
         valorPagoRadio.setText("Valor Pago");
-        buttonsGroup.add(valorPagoRadio, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonsGroup.add(valorPagoRadio, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saldoDevedorRadio = new JRadioButton();
         saldoDevedorRadio.setText("Saldo Devedor");
-        buttonsGroup.add(saldoDevedorRadio, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonsGroup.add(saldoDevedorRadio, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         buttonsGroup.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        buttonsGroup.add(spacer2, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        buttonsGroup.add(spacer2, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        jurosRadio = new JRadioButton();
+        jurosRadio.setText("Júros");
+        buttonsGroup.add(jurosRadio, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         graficoPanel = new JPanel();
         graficoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         graficoIndividualPanel.add(graficoPanel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(900, 600), new Dimension(900, 600), null, 0, false));

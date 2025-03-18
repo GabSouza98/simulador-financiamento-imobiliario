@@ -3,8 +3,6 @@ package simulador.financiamento.sistemas.amortizacao;
 import lombok.Getter;
 import lombok.Setter;
 import simulador.financiamento.dominio.*;
-import simulador.financiamento.tabela.ExcelWriter;
-import simulador.financiamento.tabela.TableRow;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
 
@@ -13,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Getter
@@ -44,7 +41,6 @@ public abstract class SistemaAmortizacao implements Serializable {
 
     protected List<Double> valorPagoMensalList = new ArrayList<>();
     protected List<String> tabela = new ArrayList<>();
-    protected List<TableRow> linhasTabela = new ArrayList<>();
 
     public SistemaAmortizacao(String nomeFinanciamento,
                               Double valorImovel,
@@ -123,8 +119,7 @@ public abstract class SistemaAmortizacao implements Serializable {
         opcoesAvancadas.setValorImovelInicial(valorImovel);
 
         valorPagoMensalList.add(0.0);
-        tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
-        linhasTabela.add(new TableRow(0, 0.0, 0.0, 0.0, saldoDevedor));
+        tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
     }
 
     protected void atualizarValorExtra() {
@@ -192,9 +187,8 @@ public abstract class SistemaAmortizacao implements Serializable {
     protected void atualizarCampos() {
         //System.out.println(String.format("Parcela %d | Saldo Devedor: R$ %.2f | Valor Parcela: R$ %.2f | Valor Extra: R$ %.2f | Valor Pago Mensal: R$ %.2f", numeroParcelas, saldoDevedor, parcela, valorExtra, valorPagoMensal));
         this.valorPagoMensalList.add(valorPagoMensal);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f",
-                numeroParcelas, amortizacaoMensal, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
-        this.linhasTabela.add(new TableRow(numeroParcelas, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
+        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                numeroParcelas, amortizacaoMensal, jurosMensal, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
     }
 
     protected abstract Double calcularMes();
