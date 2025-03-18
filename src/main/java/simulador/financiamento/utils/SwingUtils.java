@@ -35,7 +35,7 @@ public class SwingUtils {
         jTable.setModel(
                 new DefaultTableModel(data, columnNames) {
 
-                    final boolean[] canEdit = new boolean[]{false, false, false, false, false, false};
+                    final boolean[] canEdit = new boolean[]{false, false, false, false, false, false, false};
 
                     @Override
                     public Class getColumnClass(int columnIndex) {

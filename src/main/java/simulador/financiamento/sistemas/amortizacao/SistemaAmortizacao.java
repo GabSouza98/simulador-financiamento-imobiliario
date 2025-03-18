@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 
@@ -130,7 +131,7 @@ public abstract class SistemaAmortizacao implements Serializable {
             if (amortizacaoExtra.getAmortizacoesFeitas() == 0) {
                 amortizacaoExtra.setValorExtra(amortizacaoExtra.getValorExtraAnterior());
             } else {
-                //Diminuicao do valorExtraInicial a cada mês
+                //Diminuição do valorExtraInicial a cada mês
                 amortizacaoExtra.setValorExtra(amortizacaoExtra.getValorExtraAnterior() * amortizacaoExtra.getPercentProximoValorExtra());
             }
 
@@ -148,11 +149,11 @@ public abstract class SistemaAmortizacao implements Serializable {
     }
 
     private boolean intervaloCorreto() {
-        if (amortizacaoExtra.getMesInicial() % 2 == 0) {
-            return numeroParcelas % amortizacaoExtra.getIntervalo() == 0;
-        } else {
-            return (numeroParcelas - amortizacaoExtra.getMesInicial()) % amortizacaoExtra.getIntervalo() == 0;
+        if (Objects.equals(amortizacaoExtra.getMesInicial(), numeroParcelas)) {
+            return true;
         }
+
+        return (numeroParcelas - amortizacaoExtra.getMesInicial()) % amortizacaoExtra.getIntervalo() == 0;
     }
 
     protected void atualizarRendimentoPassivo() {
@@ -187,7 +188,7 @@ public abstract class SistemaAmortizacao implements Serializable {
         //System.out.println(String.format("Parcela %d | Saldo Devedor: R$ %.2f | Valor Parcela: R$ %.2f | Valor Extra: R$ %.2f | Valor Pago Mensal: R$ %.2f", numeroParcelas, saldoDevedor, parcela, valorExtra, valorPagoMensal));
         this.valorPagoMensalList.add(valorPagoMensal);
         this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-                numeroParcelas, amortizacaoMensal, jurosMensal, parcela, amortizacaoExtra.getValorExtra(), valorPagoMensal, saldoDevedor));
+                numeroParcelas, amortizacaoMensal, jurosMensal, parcela, valorPagoMensal - parcela, valorPagoMensal, saldoDevedor));
     }
 
     protected abstract Double calcularMes();
