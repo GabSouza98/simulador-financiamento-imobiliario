@@ -301,9 +301,11 @@ public class GraficoMultiplo extends JFrame {
         containerPanel.add(buttonsPanel, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(200, -1), new Dimension(200, -1), new Dimension(200, -1), 0, false));
         graficoIndividualButton = new JButton();
         graficoIndividualButton.setText("Gerar gráficos individuais");
+        graficoIndividualButton.setToolTipText("Gera um gráfico para cada item selecionado.");
         buttonsPanel.add(graficoIndividualButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), new Dimension(200, -1), 0, false));
         graficoCombinadoButton = new JButton();
         graficoCombinadoButton.setText("Gerar gráfico combinado");
+        graficoCombinadoButton.setToolTipText("Gera um gráfico de cada item selecionado, mantendo o eixo X alinhado, possibilitando observar a evolução de cada item no decorrer do financiamento.");
         buttonsPanel.add(graficoCombinadoButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), new Dimension(200, -1), 0, false));
         final Spacer spacer3 = new Spacer();
         buttonsPanel.add(spacer3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));

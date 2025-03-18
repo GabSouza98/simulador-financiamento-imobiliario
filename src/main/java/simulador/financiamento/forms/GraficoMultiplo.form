@@ -130,6 +130,7 @@
                 </constraints>
                 <properties>
                   <text value="Gerar gráficos individuais"/>
+                  <toolTipText value="Gera um gráfico para cada item selecionado."/>
                 </properties>
               </component>
               <component id="ee15d" class="javax.swing.JButton" binding="graficoCombinadoButton">
@@ -141,6 +142,7 @@
                 </constraints>
                 <properties>
                   <text value="Gerar gráfico combinado"/>
+                  <toolTipText value="Gera um gráfico de cada item selecionado, mantendo o eixo X alinhado, possibilitando observar a evolução de cada item no decorrer do financiamento."/>
                 </properties>
               </component>
               <vspacer id="fc15b">

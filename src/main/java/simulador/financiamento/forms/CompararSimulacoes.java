@@ -134,9 +134,11 @@ public class CompararSimulacoes extends JFrame {
         compararSimulacoesPanel.add(graficosPanel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 30), null, null, 0, false));
         graficoIndividualButton = new JButton();
         graficoIndividualButton.setText("Gráfico Individual");
+        graficoIndividualButton.setToolTipText("Permite visualizar um gráfico de cada vez para as simulações realizadas.");
         graficosPanel.add(graficoIndividualButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         graficoCombinadoButton = new JButton();
         graficoCombinadoButton.setText("Gráfico Combinado");
+        graficoCombinadoButton.setToolTipText("Permite visualizar diferentes gráficos simultaneamente para as simulações realizadas.");
         graficosPanel.add(graficoCombinadoButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         graficosPanel.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));

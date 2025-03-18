@@ -29,6 +29,7 @@ public class SAC extends SistemaAmortizacao {
     public Double calcularMes() {
         numeroParcelas++;
         fgts.calcularMes();
+        rendimentoPassivo.calcularMes();
 
         //J = SD * i
         jurosMensal = saldoDevedor * taxaJurosMensal;

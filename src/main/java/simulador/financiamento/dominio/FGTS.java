@@ -28,18 +28,4 @@ public class FGTS implements Serializable {
     public void calcularMes() {
         saldoAtual = saldoAtual + saldoAtual*rendimentoMensal + salario*aliquotaMensal/100;
     }
-
-    public static void main(String[] args) {
-        var fgts1 = new FGTS(0.0, 7000.0);
-        var fgts2 = new FGTS(0.0, 7000.0);
-
-        for (int i=0; i<24; i++) {
-            fgts2.calcularMes();
-        }
-
-        System.out.println("Calculo considerando rendimeneto ANUAL em 2 anos:");
-        System.out.println(fgts1.getSaldoAtual()); //13641.6
-        System.out.println("Calculo considerando rendimeneto MENSAL em 24 meses:");
-        System.out.println(fgts2.getSaldoAtual()); //13828.17094179663
-    }
 }

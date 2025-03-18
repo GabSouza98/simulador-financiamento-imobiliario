@@ -29,8 +29,8 @@ public class PRICE extends SistemaAmortizacao {
     @Override
     public Double calcularMes() {
         numeroParcelas++;
-
         fgts.calcularMes();
+        rendimentoPassivo.calcularMes();
 
         //J = SD * i
         jurosMensal = saldoDevedor * taxaJurosMensal;

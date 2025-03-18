@@ -63,6 +63,7 @@
                         </constraints>
                         <properties>
                           <text value="Valor Pago Total:"/>
+                          <toolTipText value="Soma do valor pago a cada mes até o final do financiamento."/>
                         </properties>
                       </component>
                       <component id="56f94" class="javax.swing.JLabel" binding="numeroParcelasField">
@@ -74,6 +75,7 @@
                         </constraints>
                         <properties>
                           <text value="Número de Parcelas / Prazo:"/>
+                          <toolTipText value="Número de parcelas pagas em relação ao prazo inicial contratado"/>
                         </properties>
                       </component>
                       <component id="7fd4a" class="javax.swing.JLabel" binding="ratioValorPagoTotal">
@@ -82,7 +84,7 @@
                         </constraints>
                         <properties>
                           <text value="Valor Pago Total / Valor Imovel:"/>
-                          <toolTipText value=" "/>
+                          <toolTipText value=" Relação entre valor pago e valor do imóvel na compra."/>
                         </properties>
                       </component>
                       <vspacer id="a339d">
@@ -99,6 +101,7 @@
                         <properties>
                           <font/>
                           <text value="Comparar Simulações"/>
+                          <toolTipText value="Mostra tabela comparativa entre os resultados das simulações e outras opções para comparação gráfica."/>
                         </properties>
                       </component>
                       <component id="e6bdd" class="javax.swing.JButton" binding="downloadExcelButton">
@@ -109,6 +112,7 @@
                         </constraints>
                         <properties>
                           <text value="Download Excel"/>
+                          <toolTipText value="Realiza o download de um arquivo .xlsx contendo as informações do financiamento da aba atualmente selecionada."/>
                           <verticalTextPosition value="3"/>
                         </properties>
                       </component>
@@ -118,6 +122,7 @@
                         </constraints>
                         <properties>
                           <text value="Quitado em:"/>
+                          <toolTipText value="Tempo para quitar o financiamento em anos."/>
                         </properties>
                       </component>
                       <component id="124b2" class="javax.swing.JLabel" binding="valorImovelValorizado">
@@ -126,6 +131,7 @@
                         </constraints>
                         <properties>
                           <text value="Valor Imóvel Valorização:"/>
+                          <toolTipText value="Valor do imóvel considerando a valorização até o término do financiamento, caso tenha sido informada a taxa de expectativa de valorização nas opções avançadas."/>
                         </properties>
                       </component>
                       <component id="44ef4" class="javax.swing.JLabel" binding="valorImovelInflacao">
@@ -134,6 +140,7 @@
                         </constraints>
                         <properties>
                           <text value="Valor Imóvel Inflação:"/>
+                          <toolTipText value="Valor do imóvel considerando a inflação ao término do financiamento, caso tenha sido informada a taxa de expectativa de inflação nas opções avançadas."/>
                         </properties>
                       </component>
                       <component id="4617" class="javax.swing.JButton" binding="saveButton">
@@ -145,6 +152,7 @@
                         </constraints>
                         <properties>
                           <text value="Salvar"/>
+                          <toolTipText value="Salva as simulações na mesma pasta em que está sendo executado o programa."/>
                         </properties>
                       </component>
                       <component id="a553b" class="javax.swing.JButton" binding="loadButton">
@@ -156,6 +164,7 @@
                         </constraints>
                         <properties>
                           <text value="Carregar"/>
+                          <toolTipText value="Carrega as simulações que estiverem salvas na mesma pasta em que está sendo executado o programa."/>
                         </properties>
                       </component>
                       <component id="b5d40" class="javax.swing.JButton" binding="changeThemeButton">
@@ -167,6 +176,7 @@
                         <properties>
                           <font/>
                           <text value="Alterar Tema"/>
+                          <toolTipText value="Altera entre tema claro e escuro"/>
                         </properties>
                       </component>
                     </children>
@@ -199,6 +209,7 @@
                             </constraints>
                             <properties>
                               <text value="Nome Financiamento"/>
+                              <toolTipText value="Nome da simulação"/>
                             </properties>
                           </component>
                           <component id="66f9f" class="javax.swing.JTextField" binding="nomeFinanciamento">
@@ -228,6 +239,7 @@
                             </constraints>
                             <properties>
                               <text value="Valor Imóvel (R$)"/>
+                              <toolTipText value="Valor do Imóvel em reais"/>
                             </properties>
                           </component>
                           <component id="4b477" class="javax.swing.JTextField" binding="valorImovel">
@@ -257,6 +269,7 @@
                             </constraints>
                             <properties>
                               <text value="Percentual Entrada (%)"/>
+                              <toolTipText value="Percentual de entrada"/>
                             </properties>
                           </component>
                           <component id="97a46" class="javax.swing.JSlider" binding="percentualEntrada">
@@ -292,6 +305,7 @@
                             </constraints>
                             <properties>
                               <text value="Juros Anual (%)"/>
+                              <toolTipText value="Júros Efetivo Anual"/>
                             </properties>
                           </component>
                           <component id="9d3d7" class="javax.swing.JTextField" binding="jurosAnual">
@@ -323,6 +337,7 @@
                             </constraints>
                             <properties>
                               <text value="Valor Inicial (R$)"/>
+                              <toolTipText value="Valor que será amortizado na primeira recorrência"/>
                             </properties>
                           </component>
                           <component id="172ef" class="javax.swing.JTextField" binding="valorExtraInicial">
@@ -352,6 +367,7 @@
                             </constraints>
                             <properties>
                               <text value="Prox. Valor (%)"/>
+                              <toolTipText value="Percentual para amortizar a partir do valor anterior. Caso seja 100%, o valor será constante."/>
                             </properties>
                             <clientProperties>
                               <html.disable class="java.lang.Boolean" value="false"/>
@@ -374,7 +390,9 @@
                             <preferred-size width="100" height="-1"/>
                           </grid>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Valor mínimo que deverá ser amortizado."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="fefd1" class="javax.swing.JLabel" binding="valorExtraMinimoLabel">
@@ -415,6 +433,7 @@
                             </constraints>
                             <properties>
                               <text value="Valor Investido (R$)"/>
+                              <toolTipText value="Valor investido em reais"/>
                             </properties>
                           </component>
                           <component id="96ddc" class="javax.swing.JTextField" binding="valorInvestido">
@@ -444,6 +463,7 @@
                             </constraints>
                             <properties>
                               <text value="Rendimento Anual (%)"/>
+                              <toolTipText value="Rendimento Anual bruto do produto de investimento contratado."/>
                             </properties>
                           </component>
                           <component id="d2bdf" class="javax.swing.JTextField" binding="rendimentoAnual">
@@ -473,6 +493,7 @@
                             </constraints>
                             <properties>
                               <text value="Salário Bruto (R$)"/>
+                              <toolTipText value="Salário bruto em reais"/>
                             </properties>
                           </component>
                           <component id="14ea" class="javax.swing.JTextField" binding="salarioBruto">
@@ -502,6 +523,7 @@
                             </constraints>
                             <properties>
                               <text value="Saldo FGTS (R$)"/>
+                              <toolTipText value="Saldo inicial no FGTS"/>
                             </properties>
                           </component>
                           <component id="39eed" class="javax.swing.JTextField" binding="saldoFGTS">
@@ -531,6 +553,7 @@
                             </constraints>
                             <properties>
                               <text value="Resetar campos?"/>
+                              <toolTipText value="Caso marcado, todos os campos serão resetados após calcular a simulação"/>
                             </properties>
                           </component>
                           <component id="bc609" class="javax.swing.JCheckBox" binding="resetarCamposBox">
@@ -560,6 +583,7 @@
                             </constraints>
                             <properties>
                               <text value="Sistema Amortização"/>
+                              <toolTipText value="Selecione o sistema de amortização"/>
                             </properties>
                           </component>
                           <component id="79b55" class="javax.swing.JComboBox" binding="sistemaAmortizacaoComboBox">
@@ -589,6 +613,7 @@
                             </constraints>
                             <properties>
                               <text value="Prazo (meses)"/>
+                              <toolTipText value="Duração do financiamento"/>
                             </properties>
                           </component>
                           <component id="d14b1" class="javax.swing.JTextField" binding="prazo">
@@ -618,6 +643,7 @@
                             </constraints>
                             <properties>
                               <text value="Mês Inicio"/>
+                              <toolTipText value="Mês da primeira amortização"/>
                             </properties>
                           </component>
                           <component id="48afa" class="javax.swing.JTextField" binding="mesInicial">
@@ -647,6 +673,7 @@
                             </constraints>
                             <properties>
                               <text value="Intervalo"/>
+                              <toolTipText value="Intervalo entre cada amortização"/>
                             </properties>
                           </component>
                           <component id="2f167" class="javax.swing.JTextField" binding="intervalo">
@@ -676,6 +703,7 @@
                             </constraints>
                             <properties>
                               <text value="Repetições"/>
+                              <toolTipText value="Quantidade de vezes que será amortizado."/>
                             </properties>
                           </component>
                           <component id="1efb0" class="javax.swing.JTextField" binding="quantidadePagamentosExtra">
@@ -693,6 +721,7 @@
                             <properties>
                               <selected value="true"/>
                               <text value="Sempre"/>
+                              <toolTipText value="Caso selecionado, as amortizações serão recorrentes até o final do financiamento"/>
                             </properties>
                           </component>
                         </children>
@@ -714,7 +743,8 @@
                             </constraints>
                             <properties>
                               <font size="14" style="1"/>
-                              <text value="Amortizações Extra"/>
+                              <text value="Recorrência"/>
+                              <toolTipText value="Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas"/>
                             </properties>
                           </component>
                           <component id="c1fba" class="javax.swing.JCheckBox" binding="amortizacoesExtraCheckBox">
@@ -746,6 +776,7 @@
                             <properties>
                               <font size="14" style="1"/>
                               <text value="Investimentos"/>
+                              <toolTipText value="Sessão destinada a considerar amortizações a partir dos lucros de um investimento, ou simular o valor total investido ao término do financiamento. O IR considerado é de 15%, alíquota vigente para aplicações financeiras de no mínimo 2 anos."/>
                             </properties>
                           </component>
                           <component id="39e1" class="javax.swing.JCheckBox" binding="investimentosCheckBox">
@@ -777,6 +808,7 @@
                               <enabled value="true"/>
                               <font size="14" style="1"/>
                               <text value="FGTS"/>
+                              <toolTipText value="Sessão destinada a considerar amortizações a partir do FGTS. O intervalo considerado para amortizar é a cada 2 anos, com rendimento de 3% ao ano, e com aportes iguais a 8% do salário bruto mensalmente."/>
                             </properties>
                           </component>
                           <component id="656fb" class="javax.swing.JCheckBox" binding="fgtsCheckBox">
@@ -797,6 +829,7 @@
                         </constraints>
                         <properties>
                           <text value="Opções Avançadas"/>
+                          <toolTipText value="Permite informar outros parâmetros opcionais."/>
                         </properties>
                       </component>
                       <vspacer id="ce63d">
@@ -818,6 +851,7 @@
                           <hideActionText value="false"/>
                           <horizontalTextPosition value="0"/>
                           <text value="Calcular"/>
+                          <toolTipText value="Calcula a simulação com os dados informados."/>
                         </properties>
                       </component>
                     </children>

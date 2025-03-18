@@ -41,6 +41,7 @@
             </constraints>
             <properties>
               <text value="Gráfico Individual"/>
+              <toolTipText value="Permite visualizar um gráfico de cada vez para as simulações realizadas."/>
             </properties>
           </component>
           <component id="f32df" class="javax.swing.JButton" binding="graficoCombinadoButton">
@@ -49,6 +50,7 @@
             </constraints>
             <properties>
               <text value="Gráfico Combinado"/>
+              <toolTipText value="Permite visualizar diferentes gráficos simultaneamente para as simulações realizadas."/>
             </properties>
           </component>
           <hspacer id="d5a3c">
