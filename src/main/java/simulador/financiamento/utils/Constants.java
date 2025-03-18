@@ -11,7 +11,7 @@ public final class Constants {
     public static final String HEADER_ROW = "Nº Parcela,Amortizacao,Juros,Parcela,Valor Extra,Valor Pago Mensal,Saldo Devedor";
     public static final String[] SIMULATION_COLUMN_NAMES = {"Nº Parcela","Amortizacao","Juros","Parcela","Valor Extra","Valor Pago Mensal","Saldo Devedor"};
 
-    public static final String[] COMPARISON_COLUMN_NAMES = {"Nome","Nº Parcelas","Valor Imóvel","Valor Pago","VP/VI","Valorização","Inflação"};
+    public static final String[] COMPARISON_COLUMN_NAMES = {"Nome","Nº Parcelas/Prazo","Taxa Júros","Valor Imóvel","Valor Entrada","Valor Pago","VP/VI","Valorização","Inflação"};
 
 
 

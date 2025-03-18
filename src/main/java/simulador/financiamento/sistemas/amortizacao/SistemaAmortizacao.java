@@ -99,7 +99,6 @@ public abstract class SistemaAmortizacao implements Serializable {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("##############################");
         sb.append(String.format("\nFinancimento: %s", nomeFinanciamento));
         sb.append(String.format("\nValor Imóvel: R$ %.2f, Valor Entrada: R$ %.2f", valorImovel, entrada));
         sb.append(String.format("\nJuros Anual: %.2f%%", jurosAnual*100));

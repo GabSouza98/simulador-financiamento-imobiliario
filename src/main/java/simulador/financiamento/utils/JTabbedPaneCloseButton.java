@@ -74,17 +74,17 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
                 JButton clickedButton = (JButton) e.getSource();
                 JTabbedPane tabbedPane = (JTabbedPane) clickedButton.getParent().getParent().getParent();
 
-                //seleciona a tab que foi clicada para fechar
+                //seleciona a tab que foi clicada para fechar (pode não ser a tab atualmente selecionada)
                 tabbedPane.setSelectedComponent(tab);
 
                 //pega o índice da tab atual
                 var selectedIndex = tabbedPane.getSelectedIndex();
 
-                //remove a tab
-                tabbedPane.remove(tab);
-
                 //remove o índice do map
                 simulationsList.remove(selectedIndex);
+
+                //remove a tab
+                tabbedPane.remove(tab);
             }
         }
 
@@ -98,7 +98,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
         public void mouseEntered(MouseEvent e) {
             if(e.getSource() instanceof JButton){
                 JButton clickedButton = (JButton) e.getSource();
-                System.out.println("Mouse entered");
+//                System.out.println("Mouse entered");
             }
         }
 
@@ -106,7 +106,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
         public void mouseExited(MouseEvent e) {
             if(e.getSource() instanceof JButton){
                 JButton clickedButton = (JButton) e.getSource();
-                System.out.println("Mouse exited");
+//                System.out.println("Mouse exited");
             }
         }
     }
