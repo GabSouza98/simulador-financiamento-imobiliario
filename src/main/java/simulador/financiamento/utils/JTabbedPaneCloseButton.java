@@ -37,19 +37,6 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
         addTab(title, null, component);
     }
 
-    /* addTabNoExit */
-    public void addTabNoExit(String title, Icon icon, Component component, String tip) {
-        super.addTab(title, icon, component, tip);
-    }
-
-    public void addTabNoExit(String title, Icon icon, Component component) {
-        addTabNoExit(title, icon, component, null);
-    }
-
-    public void addTabNoExit(String title, Component component) {
-        addTabNoExit(title, null, component);
-    }
-
     /* Button */
     public class CloseButtonTab extends JPanel {
         private Component tab;
@@ -110,6 +97,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
         public void mouseEntered(MouseEvent e) {
             if(e.getSource() instanceof JButton){
                 JButton clickedButton = (JButton) e.getSource();
+                System.out.println("Mouse entered");
             }
         }
 
@@ -117,6 +105,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
         public void mouseExited(MouseEvent e) {
             if(e.getSource() instanceof JButton){
                 JButton clickedButton = (JButton) e.getSource();
+                System.out.println("Mouse exited");
             }
         }
     }
