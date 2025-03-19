@@ -21,6 +21,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class SimuladorFinanciamento extends JFrame {
 
@@ -340,6 +341,11 @@ public class SimuladorFinanciamento extends JFrame {
 
         SistemaAmortizacao sistemaAmortizacao = getSistemaAmortizacao((String) sistemaAmortizacaoComboBox.getSelectedItem());
 
+        if (validateDuplicatedSimulationName(sistemaAmortizacao)) {
+            new InformacaoDialog("Nome duplicado", "O nome da simulação já foi utilizado, favor informar um nome único.");
+            return;
+        }
+
         sistemaAmortizacao.calcularFinanciamento();
 
         valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %,.2f", sistemaAmortizacao.getValorPagoTotal()));
@@ -360,6 +366,12 @@ public class SimuladorFinanciamento extends JFrame {
         if (resetarCamposBox.isSelected()) {
             resetFields();
         }
+    }
+
+    private boolean validateDuplicatedSimulationName(SistemaAmortizacao sistemaAmortizacao) {
+        return simulationsList.stream()
+                .map(SistemaAmortizacao::getNomeFinanciamento)
+                .anyMatch(name -> name.equals(sistemaAmortizacao.getNomeFinanciamento()));
     }
 
     private SistemaAmortizacao getSistemaAmortizacao(String sistemaSelecionado) {
@@ -556,7 +568,7 @@ public class SimuladorFinanciamento extends JFrame {
         upperLeftPanel.add(nomeFinanciamentoPanel, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         nomeFinanciamentoLabel = new JLabel();
         nomeFinanciamentoLabel.setText("Nome Financiamento");
-        nomeFinanciamentoLabel.setToolTipText("Nome da simulação");
+        nomeFinanciamentoLabel.setToolTipText("Nome da simulação de financiamento");
         nomeFinanciamentoPanel.add(nomeFinanciamentoLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         nomeFinanciamento = new JTextField();
         nomeFinanciamentoPanel.add(nomeFinanciamento, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));

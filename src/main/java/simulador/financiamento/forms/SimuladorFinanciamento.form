@@ -209,7 +209,7 @@
                             </constraints>
                             <properties>
                               <text value="Nome Financiamento"/>
-                              <toolTipText value="Nome da simulação"/>
+                              <toolTipText value="Nome da simulação de financiamento"/>
                             </properties>
                           </component>
                           <component id="66f9f" class="javax.swing.JTextField" binding="nomeFinanciamento">
