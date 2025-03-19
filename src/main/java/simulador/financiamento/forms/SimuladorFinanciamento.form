@@ -45,7 +45,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="11" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="12" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="right"/>
@@ -89,12 +89,12 @@
                       </component>
                       <vspacer id="a339d">
                         <constraints>
-                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                         </constraints>
                       </vspacer>
                       <component id="5184a" class="javax.swing.JButton" binding="compararSimulacoesButton">
                         <constraints>
-                          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -106,7 +106,7 @@
                       </component>
                       <component id="e6bdd" class="javax.swing.JButton" binding="downloadExcelButton">
                         <constraints>
-                          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -145,7 +145,7 @@
                       </component>
                       <component id="4617" class="javax.swing.JButton" binding="saveButton">
                         <constraints>
-                          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <minimum-size width="200" height="-1"/>
                             <preferred-size width="200" height="-1"/>
                           </grid>
@@ -157,7 +157,7 @@
                       </component>
                       <component id="a553b" class="javax.swing.JButton" binding="loadButton">
                         <constraints>
-                          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <minimum-size width="200" height="-1"/>
                             <preferred-size width="200" height="-1"/>
                           </grid>
@@ -169,7 +169,7 @@
                       </component>
                       <component id="b5d40" class="javax.swing.JButton" binding="changeThemeButton">
                         <constraints>
-                          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -179,9 +179,18 @@
                           <toolTipText value="Altera entre tema claro e escuro"/>
                         </properties>
                       </component>
+                      <component id="bc893" class="javax.swing.JLabel" binding="saldoInvestido">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Saldo Valor Investido:"/>
+                          <toolTipText value="Saldo do valor investido, caso tenha sido informado no campo Investimentos."/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
-                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="23" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="83e94" binding="upperLeftPanel" layout-manager="GridLayoutManager" row-count="25" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="left"/>
@@ -479,7 +488,7 @@
                       <grid id="1ae88" binding="salarioBrutoPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="17" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="19" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -509,7 +518,7 @@
                       <grid id="7f98f" binding="saldoAtualPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="18" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="20" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -539,7 +548,7 @@
                       <grid id="7be15" binding="resetarCamposPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="19" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="21" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -792,7 +801,7 @@
                       <grid id="208ba" binding="fgtsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -823,7 +832,7 @@
                       </grid>
                       <component id="3c02a" class="javax.swing.JButton" binding="advancedOptionsButton">
                         <constraints>
-                          <grid row="21" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="23" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -834,14 +843,14 @@
                       </component>
                       <vspacer id="ce63d">
                         <constraints>
-                          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                          <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
                             <preferred-size width="-1" height="20"/>
                           </grid>
                         </constraints>
                       </vspacer>
                       <component id="e305d" class="javax.swing.JButton" binding="calcularButton" default-binding="true">
                         <constraints>
-                          <grid row="22" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="24" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -854,6 +863,66 @@
                           <toolTipText value="Calcula a simulação com os dados informados."/>
                         </properties>
                       </component>
+                      <grid id="b14da" binding="resgatePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <grid row="16" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="32507" class="javax.swing.JLabel" binding="resgateLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                                <minimum-size width="150" height="-1"/>
+                                <preferred-size width="100" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties>
+                              <text value="Resgate em (anos)"/>
+                              <toolTipText value="Tempo até o resgate em anos"/>
+                            </properties>
+                          </component>
+                          <component id="285b5" class="javax.swing.JTextField" binding="resgate">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="200" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                        </children>
+                      </grid>
+                      <grid id="ed7f3" binding="acaoResgatePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <grid row="17" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="35c95" class="javax.swing.JLabel" binding="acaoNoResgate">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                                <minimum-size width="150" height="-1"/>
+                                <preferred-size width="100" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties>
+                              <text value="Ação"/>
+                              <toolTipText value="Ação a ser tomada no momento do resgate"/>
+                            </properties>
+                          </component>
+                          <component id="c3f9f" class="javax.swing.JComboBox" binding="resgateComboBox">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="200" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                        </children>
+                      </grid>
                     </children>
                   </grid>
                 </children>

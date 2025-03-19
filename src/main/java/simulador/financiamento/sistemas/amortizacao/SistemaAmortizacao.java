@@ -157,9 +157,9 @@ public abstract class SistemaAmortizacao implements Serializable {
     }
 
     protected void atualizarRendimentoPassivo() {
-        //Abate o rendimento passivo anualmente
-        if (nonNull(rendimentoPassivo) && numeroParcelas % 12 == 0) {
-            double rendimento = rendimentoPassivo.amortizar();
+        //Resgata o rendimento passivo no prazo
+        if (nonNull(rendimentoPassivo) && numeroParcelas % rendimentoPassivo.getPrazoResgateMeses() == 0) {
+            double rendimento = rendimentoPassivo.resgatar();
             valorPagoMensal += rendimento;
             amortizacaoMensal += rendimento;
         }

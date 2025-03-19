@@ -21,7 +21,6 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class SimuladorFinanciamento extends JFrame {
 
@@ -102,6 +101,13 @@ public class SimuladorFinanciamento extends JFrame {
     private JLabel valorImovelInflacao;
     private JButton saveButton;
     private JButton loadButton;
+    private JPanel resgatePanel;
+    private JLabel resgateLabel;
+    private JTextField resgate;
+    private JLabel acaoNoResgate;
+    private JComboBox<String> resgateComboBox;
+    private JPanel acaoResgatePanel;
+    private JLabel saldoInvestido;
 
     private final ExcelWriter excelWriter = new ExcelWriter();
 
@@ -129,6 +135,7 @@ public class SimuladorFinanciamento extends JFrame {
         setLocationRelativeTo(null);
 
         defineOpcoesSistemasAmortizacao();
+        defineOpcoesResgate();
         defineFontes();
         desabilitaCamposAmortizacao();
         desabilitaCamposInvestimentos();
@@ -209,6 +216,7 @@ public class SimuladorFinanciamento extends JFrame {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void carregar() {
         try {
             FileInputStream fileInput = new FileInputStream("simulationsList.txt");
@@ -262,6 +270,11 @@ public class SimuladorFinanciamento extends JFrame {
         sistemaAmortizacaoComboBox.addItem(SistemaAmortizacaoEnum.SAC.getNome());
     }
 
+    private void defineOpcoesResgate() {
+        resgateComboBox.addItem(AcoesResgate.AMORTIZAR.getNome());
+        resgateComboBox.addItem(AcoesResgate.REINVESTIR.getNome());
+    }
+
     private void desabilitaCamposAmortizacao() {
         valorExtraInicialPanel.setVisible(false);
         percentualProximoValorExtraPanel.setVisible(false);
@@ -284,11 +297,15 @@ public class SimuladorFinanciamento extends JFrame {
     private void desabilitaCamposInvestimentos() {
         valorInvestidoPanel.setVisible(false);
         rendimentoAnualPanel.setVisible(false);
+        resgatePanel.setVisible(false);
+        acaoResgatePanel.setVisible(false);
     }
 
     private void habilitaCamposInvestimentos() {
         valorInvestidoPanel.setVisible(true);
         rendimentoAnualPanel.setVisible(true);
+        resgatePanel.setVisible(true);
+        acaoResgatePanel.setVisible(true);
     }
 
     private void desabilitaCamposFgts() {
@@ -311,6 +328,8 @@ public class SimuladorFinanciamento extends JFrame {
 
         valorInvestido.setText("0");
         rendimentoAnual.setText("0");
+        resgate.setText("2");
+//        resgateComboBox
 
         salarioBruto.setText("0");
         saldoFGTS.setText("0");
@@ -354,6 +373,7 @@ public class SimuladorFinanciamento extends JFrame {
         anosConclusaoField.setText(String.format("Quitado em: %.1f anos", (double) sistemaAmortizacao.getNumeroParcelas() / 12));
         valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
+        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", sistemaAmortizacao.getRendimentoPassivo().getValorInvestido()));
 
         JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
         JScrollPane scrollPane = new JScrollPane(jTable);
@@ -393,7 +413,10 @@ public class SimuladorFinanciamento extends JFrame {
                             qtdOcorrenciasCheckBox.isSelected()),
                     new RendimentoPassivo(
                             Double.valueOf(valorInvestido.getText()),
-                            Double.valueOf(rendimentoAnual.getText())),
+                            Double.valueOf(rendimentoAnual.getText()),
+                            Integer.valueOf(resgate.getText()),
+                            (String) resgateComboBox.getSelectedItem()
+                    ),
                     new FGTS(
                             Double.valueOf(saldoFGTS.getText()),
                             Double.valueOf(salarioBruto.getText())
@@ -417,7 +440,10 @@ public class SimuladorFinanciamento extends JFrame {
                             qtdOcorrenciasCheckBox.isSelected()),
                     new RendimentoPassivo(
                             Double.valueOf(valorInvestido.getText()),
-                            Double.valueOf(rendimentoAnual.getText())),
+                            Double.valueOf(rendimentoAnual.getText()),
+                            Integer.valueOf(resgate.getText()),
+                            (String) resgateComboBox.getSelectedItem()
+                    ),
                     new FGTS(
                             Double.valueOf(saldoFGTS.getText()),
                             Double.valueOf(salarioBruto.getText())
@@ -456,19 +482,22 @@ public class SimuladorFinanciamento extends JFrame {
         intervalo.setText(sistemaAmortizacao.getAmortizacaoExtra().getIntervalo().toString());
         quantidadePagamentosExtra.setText(sistemaAmortizacao.getAmortizacaoExtra().getQuantidadeAmortizacoesDesejadas().toString());
 
-        valorInvestido.setText(sistemaAmortizacao.getRendimentoPassivo().getValorInvestido().toString());
+        valorInvestido.setText(sistemaAmortizacao.getRendimentoPassivo().getValorInicialPrimeiroAporte().toString());
         rendimentoAnual.setText(sistemaAmortizacao.getRendimentoPassivo().getRendimentoAnual().toString());
+        resgate.setText(sistemaAmortizacao.getRendimentoPassivo().getPrazoResgateAnos().toString());
+        resgateComboBox.setSelectedIndex(sistemaAmortizacao.getRendimentoPassivo().getAcao().getIndex());
 
         salarioBruto.setText(sistemaAmortizacao.getFgts().getSalario().toString());
         saldoFGTS.setText(sistemaAmortizacao.getFgts().getSaldoAtual().toString());
 
         //Bottom Fields
-        valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %.2f", sistemaAmortizacao.getValorPagoTotal()));
+        valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %,.2f", sistemaAmortizacao.getValorPagoTotal()));
         numeroParcelasField.setText("Número de Parcelas / Prazo: " + sistemaAmortizacao.getNumeroParcelas() + "/" + sistemaAmortizacao.getPrazo());
         ratioValorPagoTotal.setText(String.format("Valor Pago Total / Valor Imovel: %.2f", sistemaAmortizacao.getValorPagoTotal() / sistemaAmortizacao.getValorImovel()));
         anosConclusaoField.setText(String.format("Quitado em: %.1f anos", (double) sistemaAmortizacao.getNumeroParcelas() / 12));
         valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
+        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", sistemaAmortizacao.getRendimentoPassivo().getValorInvestido()));
 
         opcoesAvancadas = sistemaAmortizacao.getOpcoesAvancadas();
 
@@ -500,7 +529,7 @@ public class SimuladorFinanciamento extends JFrame {
         horizontalSplitPane.setOrientation(0);
         leftPanel.add(horizontalSplitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, -1), new Dimension(400, -1), null, 0, false));
         bottomLeftPanel = new JPanel();
-        bottomLeftPanel.setLayout(new GridLayoutManager(11, 3, new Insets(20, 20, 20, 20), -1, -1));
+        bottomLeftPanel.setLayout(new GridLayoutManager(12, 3, new Insets(20, 20, 20, 20), -1, -1));
         bottomLeftPanel.setMaximumSize(new Dimension(2147483647, 300));
         bottomLeftPanel.setMinimumSize(new Dimension(239, 300));
         bottomLeftPanel.setPreferredSize(new Dimension(264, 300));
@@ -519,18 +548,18 @@ public class SimuladorFinanciamento extends JFrame {
         ratioValorPagoTotal.setToolTipText(" Relação entre valor pago e valor do imóvel na compra.");
         bottomLeftPanel.add(ratioValorPagoTotal, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        bottomLeftPanel.add(spacer1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        bottomLeftPanel.add(spacer1, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         compararSimulacoesButton = new JButton();
         Font compararSimulacoesButtonFont = this.$$$getFont$$$(null, -1, -1, compararSimulacoesButton.getFont());
         if (compararSimulacoesButtonFont != null) compararSimulacoesButton.setFont(compararSimulacoesButtonFont);
         compararSimulacoesButton.setText("Comparar Simulações");
         compararSimulacoesButton.setToolTipText("Mostra tabela comparativa entre os resultados das simulações e outras opções para comparação gráfica.");
-        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(7, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         downloadExcelButton = new JButton();
         downloadExcelButton.setText("Download Excel");
         downloadExcelButton.setToolTipText("Realiza o download de um arquivo .xlsx contendo as informações do financiamento da aba atualmente selecionada.");
         downloadExcelButton.setVerticalTextPosition(3);
-        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         anosConclusaoField = new JLabel();
         anosConclusaoField.setText("Quitado em:");
         anosConclusaoField.setToolTipText("Tempo para quitar o financiamento em anos.");
@@ -546,19 +575,23 @@ public class SimuladorFinanciamento extends JFrame {
         saveButton = new JButton();
         saveButton.setText("Salvar");
         saveButton.setToolTipText("Salva as simulações na mesma pasta em que está sendo executado o programa.");
-        bottomLeftPanel.add(saveButton, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(saveButton, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
         loadButton = new JButton();
         loadButton.setText("Carregar");
         loadButton.setToolTipText("Carrega as simulações que estiverem salvas na mesma pasta em que está sendo executado o programa.");
-        bottomLeftPanel.add(loadButton, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(loadButton, new GridConstraints(11, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
         changeThemeButton = new JButton();
         Font changeThemeButtonFont = this.$$$getFont$$$(null, -1, -1, changeThemeButton.getFont());
         if (changeThemeButtonFont != null) changeThemeButton.setFont(changeThemeButtonFont);
         changeThemeButton.setText("Alterar Tema");
         changeThemeButton.setToolTipText("Altera entre tema claro e escuro");
-        bottomLeftPanel.add(changeThemeButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(changeThemeButton, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        saldoInvestido = new JLabel();
+        saldoInvestido.setText("Saldo Valor Investido:");
+        saldoInvestido.setToolTipText("Saldo do valor investido, caso tenha sido informado no campo Investimentos.");
+        bottomLeftPanel.add(saldoInvestido, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         upperLeftPanel = new JPanel();
-        upperLeftPanel.setLayout(new GridLayoutManager(23, 6, new Insets(20, 20, 20, 20), -1, -1));
+        upperLeftPanel.setLayout(new GridLayoutManager(25, 6, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
         upperLeftPanel.setForeground(new Color(-13947600));
         horizontalSplitPane.setLeftComponent(upperLeftPanel);
@@ -655,7 +688,7 @@ public class SimuladorFinanciamento extends JFrame {
         rendimentoAnualPanel.add(rendimentoAnual, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         salarioBrutoPanel = new JPanel();
         salarioBrutoPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(17, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(salarioBrutoPanel, new GridConstraints(19, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Salário Bruto (R$)");
         label1.setToolTipText("Salário bruto em reais");
@@ -664,7 +697,7 @@ public class SimuladorFinanciamento extends JFrame {
         salarioBrutoPanel.add(salarioBruto, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         saldoAtualPanel = new JPanel();
         saldoAtualPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(saldoAtualPanel, new GridConstraints(18, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(saldoAtualPanel, new GridConstraints(20, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Saldo FGTS (R$)");
         label2.setToolTipText("Saldo inicial no FGTS");
@@ -673,7 +706,7 @@ public class SimuladorFinanciamento extends JFrame {
         saldoAtualPanel.add(saldoFGTS, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         resetarCamposPanel = new JPanel();
         resetarCamposPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(resetarCamposPanel, new GridConstraints(19, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(resetarCamposPanel, new GridConstraints(21, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Resetar campos?");
         label3.setToolTipText("Caso marcado, todos os campos serão resetados após calcular a simulação");
@@ -759,7 +792,7 @@ public class SimuladorFinanciamento extends JFrame {
         investimentosPanel.add(investimentosCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fgtsPanel = new JPanel();
         fgtsPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        upperLeftPanel.add(fgtsPanel, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        upperLeftPanel.add(fgtsPanel, new GridConstraints(18, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         fgtsLabel = new JLabel();
         fgtsLabel.setEnabled(true);
         Font fgtsLabelFont = this.$$$getFont$$$(null, Font.BOLD, 14, fgtsLabel.getFont());
@@ -773,9 +806,9 @@ public class SimuladorFinanciamento extends JFrame {
         advancedOptionsButton = new JButton();
         advancedOptionsButton.setText("Opções Avançadas");
         advancedOptionsButton.setToolTipText("Permite informar outros parâmetros opcionais.");
-        upperLeftPanel.add(advancedOptionsButton, new GridConstraints(21, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        upperLeftPanel.add(advancedOptionsButton, new GridConstraints(23, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        upperLeftPanel.add(spacer2, new GridConstraints(20, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 20), null, 0, false));
+        upperLeftPanel.add(spacer2, new GridConstraints(22, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 20), null, 0, false));
         calcularButton = new JButton();
         calcularButton.setEnabled(true);
         Font calcularButtonFont = this.$$$getFont$$$(null, -1, -1, calcularButton.getFont());
@@ -784,7 +817,25 @@ public class SimuladorFinanciamento extends JFrame {
         calcularButton.setHorizontalTextPosition(0);
         calcularButton.setText("Calcular");
         calcularButton.setToolTipText("Calcula a simulação com os dados informados.");
-        upperLeftPanel.add(calcularButton, new GridConstraints(22, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        upperLeftPanel.add(calcularButton, new GridConstraints(24, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        resgatePanel = new JPanel();
+        resgatePanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        upperLeftPanel.add(resgatePanel, new GridConstraints(16, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        resgateLabel = new JLabel();
+        resgateLabel.setText("Resgate em (anos)");
+        resgateLabel.setToolTipText("Tempo até o resgate em anos");
+        resgatePanel.add(resgateLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
+        resgate = new JTextField();
+        resgatePanel.add(resgate, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        acaoResgatePanel = new JPanel();
+        acaoResgatePanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        upperLeftPanel.add(acaoResgatePanel, new GridConstraints(17, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        acaoNoResgate = new JLabel();
+        acaoNoResgate.setText("Ação");
+        acaoNoResgate.setToolTipText("Ação a ser tomada no momento do resgate");
+        acaoResgatePanel.add(acaoNoResgate, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
+        resgateComboBox = new JComboBox();
+        acaoResgatePanel.add(resgateComboBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         rightPanel = new JPanel();
         rightPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         verticalSplitPlane.setRightComponent(rightPanel);

@@ -9,6 +9,9 @@ import java.io.Serializable;
 @Getter
 public class RendimentoPassivo implements Serializable {
     private final Double rendimentoAnual;
+    private final Integer prazoResgateAnos;
+    private final Integer prazoResgateMeses;
+    private final AcoesResgate acao;
     private final Double impostoRenda = Constants.IMPOSTO_DE_RENDA;
 
     private final Double rendimentoMensal;
@@ -16,20 +19,39 @@ public class RendimentoPassivo implements Serializable {
     //Valor que é atualizado mensalmente
     private Double valorInvestido;
 
-    //Valor inicial do investimento
-    private final Double valorInicial;
+    //Valor inicial do investimento em cada aporte. Muda caso seja selecionada a opção Reinvestir.
+    private Double valorInicialAportado;
 
-    public RendimentoPassivo(Double valorInvestido, Double rendimentoAnual) {
+    private final Double valorInicialPrimeiroAporte;
+
+    public RendimentoPassivo(Double valorInvestido, Double rendimentoAnual, Integer resgate, String acao) {
         this.valorInvestido = valorInvestido;
-        this.valorInicial = valorInvestido;
+        this.valorInicialAportado = valorInvestido;
+        this.valorInicialPrimeiroAporte = valorInvestido;
         this.rendimentoAnual = rendimentoAnual;
         this.rendimentoMensal = Conversor.converterTaxaAnualParaMensal(rendimentoAnual);
+        this.prazoResgateAnos = resgate;
+        this.prazoResgateMeses = resgate*12;
+        this.acao = AcoesResgate.getByName(acao);
     }
 
-    public Double amortizar() {
-        var lucroLiquido = (valorInvestido - valorInicial) * (1 - impostoRenda);
-        this.valorInvestido = valorInicial;
-        return lucroLiquido;
+    public Double resgatar() {
+
+        var lucroLiquido = (valorInvestido - valorInicialAportado) * (1 - impostoRenda);
+
+        if (AcoesResgate.AMORTIZAR.equals(acao)) {
+            this.valorInvestido = valorInicialAportado;
+            return lucroLiquido;
+        }
+
+        if (AcoesResgate.REINVESTIR.equals(acao)) {
+            var valorParaReinvestir = valorInicialAportado + lucroLiquido;
+            this.valorInicialAportado = valorParaReinvestir;
+            this.valorInvestido = valorParaReinvestir;
+            return 0.0;
+        }
+
+        return null;
     }
 
     public void calcularMes() {
