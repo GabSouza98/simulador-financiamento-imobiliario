@@ -10,12 +10,12 @@ public class PRICE extends SistemaAmortizacao {
     private final Double parcelaConstante;
 
     public PRICE(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
-                 Integer prazo, AmortizacaoExtra amortizacaoExtra,
-                 RendimentoPassivo rendimentoPassivo,
+                 Integer prazo, Recorrencia recorrencia,
+                 Investimentos investimentos,
                  FGTS fgts,
                  OpcoesAvancadas opcoesAvancadas) {
         super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, prazo,
-                amortizacaoExtra, rendimentoPassivo, fgts, opcoesAvancadas);
+                recorrencia, investimentos, fgts, opcoesAvancadas);
 
         parcela = valorFinanciado / RendaCerta.calcularTermoExponencial(taxaJurosMensal, prazo);
         parcelaConstante = parcela;
@@ -27,32 +27,8 @@ public class PRICE extends SistemaAmortizacao {
     }
 
     @Override
-    public Double calcularMes() {
-        numeroParcelas++;
-        fgts.calcularMes();
-        rendimentoPassivo.calcularMes();
-
-        //J = SD * i
-        jurosMensal = saldoDevedor * taxaJurosMensal;
-
+    public void calcularMesEspecifico() {
         //A = P - J
         amortizacaoMensal = parcela - jurosMensal;
-
-        valorPagoMensal = parcela;
-
-        atualizarValorExtra();
-
-        atualizarRendimentoPassivo();
-
-        atualizarFgts();
-
-        saldoDevedor = saldoDevedor + jurosMensal - valorPagoMensal;
-        //saldoDevedor = saldoDevedor - amortizacaoMensal; //validar igualdade
-
-        checarSaldoDevedorNegativo();
-
-        atualizarCampos();
-
-        return saldoDevedor;
     }
 }

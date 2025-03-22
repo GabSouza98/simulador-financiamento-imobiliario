@@ -45,7 +45,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="12" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="10504" binding="bottomLeftPanel" layout-manager="GridLayoutManager" row-count="13" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="20" left="20" bottom="20" right="20"/>
                     <constraints>
                       <splitpane position="right"/>
@@ -89,12 +89,12 @@
                       </component>
                       <vspacer id="a339d">
                         <constraints>
-                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                         </constraints>
                       </vspacer>
                       <component id="5184a" class="javax.swing.JButton" binding="compararSimulacoesButton">
                         <constraints>
-                          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -106,7 +106,7 @@
                       </component>
                       <component id="e6bdd" class="javax.swing.JButton" binding="downloadExcelButton">
                         <constraints>
-                          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -145,7 +145,7 @@
                       </component>
                       <component id="4617" class="javax.swing.JButton" binding="saveButton">
                         <constraints>
-                          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <minimum-size width="200" height="-1"/>
                             <preferred-size width="200" height="-1"/>
                           </grid>
@@ -157,7 +157,7 @@
                       </component>
                       <component id="a553b" class="javax.swing.JButton" binding="loadButton">
                         <constraints>
-                          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <minimum-size width="200" height="-1"/>
                             <preferred-size width="200" height="-1"/>
                           </grid>
@@ -169,7 +169,7 @@
                       </component>
                       <component id="b5d40" class="javax.swing.JButton" binding="changeThemeButton">
                         <constraints>
-                          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                          <grid row="11" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
                           </grid>
                         </constraints>
@@ -181,11 +181,19 @@
                       </component>
                       <component id="bc893" class="javax.swing.JLabel" binding="saldoInvestido">
                         <constraints>
-                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Saldo Valor Investido:"/>
                           <toolTipText value="Saldo do valor investido, caso tenha sido informado no campo Investimentos."/>
+                        </properties>
+                      </component>
+                      <component id="8a9a4" class="javax.swing.JLabel" binding="valorizacaoReal">
+                        <constraints>
+                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Valorização Real:"/>
                         </properties>
                       </component>
                     </children>
@@ -743,7 +751,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="86a2" class="javax.swing.JLabel" binding="amortizacaoExtra">
+                          <component id="86a2" class="javax.swing.JLabel" binding="recorrencia">
                             <constraints>
                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                                 <minimum-size width="150" height="-1"/>

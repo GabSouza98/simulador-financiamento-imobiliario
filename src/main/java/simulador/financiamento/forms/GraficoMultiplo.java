@@ -233,7 +233,7 @@ public class GraficoMultiplo extends JFrame {
 
     private void showChart(String name, ChartPanel chartPanel) {
         JFrame dialogFrame = new JFrame();
-        dialogFrame.setMinimumSize(new Dimension(900, 600));
+        dialogFrame.setMinimumSize(new Dimension(600, 400));
         dialogFrame.setTitle(name);
         dialogFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dialogFrame.setContentPane(chartPanel);

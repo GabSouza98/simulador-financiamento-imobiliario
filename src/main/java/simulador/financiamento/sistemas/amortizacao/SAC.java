@@ -10,12 +10,12 @@ public class SAC extends SistemaAmortizacao {
 
     public SAC(String nomeFinanciamento, Double valorImovel, Double percentualEntrada, Double jurosAnual,
                Integer prazo,
-               AmortizacaoExtra amortizacaoExtra,
-               RendimentoPassivo rendimentoPassivo,
+               Recorrencia recorrencia,
+               Investimentos investimentos,
                FGTS fgts,
                OpcoesAvancadas opcoesAvancadas) {
         super(nomeFinanciamento, valorImovel, percentualEntrada, jurosAnual, prazo,
-                amortizacaoExtra, rendimentoPassivo, fgts, opcoesAvancadas);
+                recorrencia, investimentos, fgts, opcoesAvancadas);
 
         amortizacaoConstante = valorFinanciado / (double) prazo;
     }
@@ -26,35 +26,9 @@ public class SAC extends SistemaAmortizacao {
     }
 
     @Override
-    public Double calcularMes() {
-        numeroParcelas++;
-        fgts.calcularMes();
-        rendimentoPassivo.calcularMes();
-
-        //J = SD * i
-        jurosMensal = saldoDevedor * taxaJurosMensal;
-
+    public void calcularMesEspecifico() {
         //P = A + J
         parcela = amortizacaoConstante + jurosMensal;
-
-        valorPagoMensal = parcela;
-
         amortizacaoMensal = amortizacaoConstante;
-
-        atualizarValorExtra();
-
-        atualizarRendimentoPassivo();
-
-        atualizarFgts();
-
-        //SD = SD - A
-        saldoDevedor = saldoDevedor - amortizacaoMensal;
-
-        checarSaldoDevedorNegativo();
-
-        atualizarCampos();
-
-        return saldoDevedor;
     }
-
 }

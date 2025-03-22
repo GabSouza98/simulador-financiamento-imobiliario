@@ -6,6 +6,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import simulador.financiamento.dominio.*;
+import simulador.financiamento.dominio.amortizacao.AmortizacaoExtra;
 import simulador.financiamento.tabela.ExcelWriter;
 import simulador.financiamento.sistemas.amortizacao.PRICE;
 import simulador.financiamento.sistemas.amortizacao.SAC;
@@ -86,7 +87,7 @@ public class SimuladorFinanciamento extends JFrame {
     private JLabel intervaloLabel;
     private JPanel quantidadePanel;
     private JTextField quantidadePagamentosExtra;
-    private JLabel amortizacaoExtra;
+    private JLabel recorrencia;
     private JLabel investimentosLabel;
     private JLabel fgtsLabel;
     private JCheckBox amortizacoesExtraCheckBox;
@@ -108,6 +109,7 @@ public class SimuladorFinanciamento extends JFrame {
     private JComboBox<String> resgateComboBox;
     private JPanel acaoResgatePanel;
     private JLabel saldoInvestido;
+    private JLabel valorizacaoReal;
 
     private final ExcelWriter excelWriter = new ExcelWriter();
 
@@ -329,7 +331,7 @@ public class SimuladorFinanciamento extends JFrame {
         valorInvestido.setText("0");
         rendimentoAnual.setText("0");
         resgate.setText("2");
-//        resgateComboBox
+        resgateComboBox.setSelectedIndex(0);
 
         salarioBruto.setText("0");
         saldoFGTS.setText("0");
@@ -373,7 +375,8 @@ public class SimuladorFinanciamento extends JFrame {
         anosConclusaoField.setText(String.format("Quitado em: %.1f anos", (double) sistemaAmortizacao.getNumeroParcelas() / 12));
         valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
-        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", sistemaAmortizacao.getRendimentoPassivo().getValorInvestido()));
+        valorizacaoReal.setText(String.format("Valorização Real: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado() - sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
+        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", AmortizacaoExtra.buscarAmortizacaoExtra(Investimentos.class, sistemaAmortizacao.getAmortizacaoExtraList()).getValorInvestido()));
 
         JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
         JScrollPane scrollPane = new JScrollPane(jTable);
@@ -403,7 +406,7 @@ public class SimuladorFinanciamento extends JFrame {
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    new AmortizacaoExtra(
+                    new Recorrencia(
                             Double.valueOf(valorExtraInicial.getText()),
                             Double.valueOf(percentProximoValorExtra.getText()),
                             Double.valueOf(valorExtraMinimo.getText()),
@@ -411,7 +414,7 @@ public class SimuladorFinanciamento extends JFrame {
                             Integer.valueOf(intervalo.getText()),
                             Integer.valueOf(quantidadePagamentosExtra.getText()),
                             qtdOcorrenciasCheckBox.isSelected()),
-                    new RendimentoPassivo(
+                    new Investimentos(
                             Double.valueOf(valorInvestido.getText()),
                             Double.valueOf(rendimentoAnual.getText()),
                             Integer.valueOf(resgate.getText()),
@@ -430,7 +433,7 @@ public class SimuladorFinanciamento extends JFrame {
                     (double) percentualEntrada.getValue(),
                     Double.valueOf(jurosAnual.getText()),
                     Integer.valueOf(prazo.getText()),
-                    new AmortizacaoExtra(
+                    new Recorrencia(
                             Double.valueOf(valorExtraInicial.getText()),
                             Double.valueOf(percentProximoValorExtra.getText()),
                             Double.valueOf(valorExtraMinimo.getText()),
@@ -438,7 +441,7 @@ public class SimuladorFinanciamento extends JFrame {
                             Integer.valueOf(intervalo.getText()),
                             Integer.valueOf(quantidadePagamentosExtra.getText()),
                             qtdOcorrenciasCheckBox.isSelected()),
-                    new RendimentoPassivo(
+                    new Investimentos(
                             Double.valueOf(valorInvestido.getText()),
                             Double.valueOf(rendimentoAnual.getText()),
                             Integer.valueOf(resgate.getText()),
@@ -457,14 +460,25 @@ public class SimuladorFinanciamento extends JFrame {
     private void resetFields() {
         nomeFinanciamento.setText("");
         valorImovel.setText("");
-        percentualEntrada.setValue(30);
+        percentualEntrada.setValue(50);
+        sistemaAmortizacaoComboBox.setSelectedIndex(0);
         jurosAnual.setText("");
         prazo.setText("");
+
         valorExtraInicial.setText("");
         percentProximoValorExtra.setText("");
         valorExtraMinimo.setText("");
-        valorInvestido.setText("");
-        rendimentoAnual.setText("");
+        mesInicial.setText("1");
+        intervalo.setText("1");
+        quantidadePagamentosExtra.setText("0");
+
+        valorInvestido.setText("0");
+        rendimentoAnual.setText("0");
+        resgate.setText("2");
+        resgateComboBox.setSelectedIndex(0);
+
+        salarioBruto.setText("0");
+        saldoFGTS.setText("0");
     }
 
     private void updateFields(SistemaAmortizacao sistemaAmortizacao) {
@@ -475,20 +489,23 @@ public class SimuladorFinanciamento extends JFrame {
         jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual() * 100));
         prazo.setText(String.valueOf(sistemaAmortizacao.getPrazo()));
 
-        valorExtraInicial.setText(sistemaAmortizacao.getAmortizacaoExtra().getValorExtraInicial().toString());
-        percentProximoValorExtra.setText(String.valueOf(sistemaAmortizacao.getAmortizacaoExtra().getPercentProximoValorExtra() * 100));
-        valorExtraMinimo.setText(sistemaAmortizacao.getAmortizacaoExtra().getValorExtraMinimo().toString());
-        mesInicial.setText(sistemaAmortizacao.getAmortizacaoExtra().getMesInicial().toString());
-        intervalo.setText(sistemaAmortizacao.getAmortizacaoExtra().getIntervalo().toString());
-        quantidadePagamentosExtra.setText(sistemaAmortizacao.getAmortizacaoExtra().getQuantidadeAmortizacoesDesejadas().toString());
+        Recorrencia recorrencia = AmortizacaoExtra.buscarAmortizacaoExtra(Recorrencia.class, sistemaAmortizacao.getAmortizacaoExtraList());
+        valorExtraInicial.setText(recorrencia.getValorExtraInicial().toString());
+        percentProximoValorExtra.setText(String.valueOf(recorrencia.getPercentProximoValorExtra() * 100));
+        valorExtraMinimo.setText(recorrencia.getValorExtraMinimo().toString());
+        mesInicial.setText(recorrencia.getMesInicial().toString());
+        intervalo.setText(recorrencia.getIntervalo().toString());
+        quantidadePagamentosExtra.setText(recorrencia.getQuantidadeAmortizacoesDesejadas().toString());
 
-        valorInvestido.setText(sistemaAmortizacao.getRendimentoPassivo().getValorInicialPrimeiroAporte().toString());
-        rendimentoAnual.setText(sistemaAmortizacao.getRendimentoPassivo().getRendimentoAnual().toString());
-        resgate.setText(sistemaAmortizacao.getRendimentoPassivo().getPrazoResgateAnos().toString());
-        resgateComboBox.setSelectedIndex(sistemaAmortizacao.getRendimentoPassivo().getAcao().getIndex());
+        Investimentos investimentos = AmortizacaoExtra.buscarAmortizacaoExtra(Investimentos.class, sistemaAmortizacao.getAmortizacaoExtraList());
+        valorInvestido.setText(investimentos.getValorInicialPrimeiroAporte().toString());
+        rendimentoAnual.setText(investimentos.getRendimentoAnual().toString());
+        resgate.setText(investimentos.getPrazoResgateAnos().toString());
+        resgateComboBox.setSelectedIndex(investimentos.getAcao().getIndex());
 
-        salarioBruto.setText(sistemaAmortizacao.getFgts().getSalario().toString());
-        saldoFGTS.setText(sistemaAmortizacao.getFgts().getSaldoAtual().toString());
+        FGTS fgts = AmortizacaoExtra.buscarAmortizacaoExtra(FGTS.class, sistemaAmortizacao.getAmortizacaoExtraList());
+        salarioBruto.setText(fgts.getSalario().toString());
+        saldoFGTS.setText(fgts.getSaldoAtual().toString());
 
         //Bottom Fields
         valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %,.2f", sistemaAmortizacao.getValorPagoTotal()));
@@ -497,7 +514,8 @@ public class SimuladorFinanciamento extends JFrame {
         anosConclusaoField.setText(String.format("Quitado em: %.1f anos", (double) sistemaAmortizacao.getNumeroParcelas() / 12));
         valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
         valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
-        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", sistemaAmortizacao.getRendimentoPassivo().getValorInvestido()));
+        valorizacaoReal.setText(String.format("Valorização Real: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado() - sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
+        saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", investimentos.getValorInvestido()));
 
         opcoesAvancadas = sistemaAmortizacao.getOpcoesAvancadas();
 
@@ -529,7 +547,7 @@ public class SimuladorFinanciamento extends JFrame {
         horizontalSplitPane.setOrientation(0);
         leftPanel.add(horizontalSplitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, -1), new Dimension(400, -1), null, 0, false));
         bottomLeftPanel = new JPanel();
-        bottomLeftPanel.setLayout(new GridLayoutManager(12, 3, new Insets(20, 20, 20, 20), -1, -1));
+        bottomLeftPanel.setLayout(new GridLayoutManager(13, 3, new Insets(20, 20, 20, 20), -1, -1));
         bottomLeftPanel.setMaximumSize(new Dimension(2147483647, 300));
         bottomLeftPanel.setMinimumSize(new Dimension(239, 300));
         bottomLeftPanel.setPreferredSize(new Dimension(264, 300));
@@ -548,18 +566,18 @@ public class SimuladorFinanciamento extends JFrame {
         ratioValorPagoTotal.setToolTipText(" Relação entre valor pago e valor do imóvel na compra.");
         bottomLeftPanel.add(ratioValorPagoTotal, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        bottomLeftPanel.add(spacer1, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        bottomLeftPanel.add(spacer1, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         compararSimulacoesButton = new JButton();
         Font compararSimulacoesButtonFont = this.$$$getFont$$$(null, -1, -1, compararSimulacoesButton.getFont());
         if (compararSimulacoesButtonFont != null) compararSimulacoesButton.setFont(compararSimulacoesButtonFont);
         compararSimulacoesButton.setText("Comparar Simulações");
         compararSimulacoesButton.setToolTipText("Mostra tabela comparativa entre os resultados das simulações e outras opções para comparação gráfica.");
-        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(compararSimulacoesButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         downloadExcelButton = new JButton();
         downloadExcelButton.setText("Download Excel");
         downloadExcelButton.setToolTipText("Realiza o download de um arquivo .xlsx contendo as informações do financiamento da aba atualmente selecionada.");
         downloadExcelButton.setVerticalTextPosition(3);
-        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(downloadExcelButton, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         anosConclusaoField = new JLabel();
         anosConclusaoField.setText("Quitado em:");
         anosConclusaoField.setToolTipText("Tempo para quitar o financiamento em anos.");
@@ -575,21 +593,24 @@ public class SimuladorFinanciamento extends JFrame {
         saveButton = new JButton();
         saveButton.setText("Salvar");
         saveButton.setToolTipText("Salva as simulações na mesma pasta em que está sendo executado o programa.");
-        bottomLeftPanel.add(saveButton, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(saveButton, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
         loadButton = new JButton();
         loadButton.setText("Carregar");
         loadButton.setToolTipText("Carrega as simulações que estiverem salvas na mesma pasta em que está sendo executado o programa.");
-        bottomLeftPanel.add(loadButton, new GridConstraints(11, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(loadButton, new GridConstraints(12, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(200, -1), new Dimension(200, -1), null, 0, false));
         changeThemeButton = new JButton();
         Font changeThemeButtonFont = this.$$$getFont$$$(null, -1, -1, changeThemeButton.getFont());
         if (changeThemeButtonFont != null) changeThemeButton.setFont(changeThemeButtonFont);
         changeThemeButton.setText("Alterar Tema");
         changeThemeButton.setToolTipText("Altera entre tema claro e escuro");
-        bottomLeftPanel.add(changeThemeButton, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        bottomLeftPanel.add(changeThemeButton, new GridConstraints(11, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         saldoInvestido = new JLabel();
         saldoInvestido.setText("Saldo Valor Investido:");
         saldoInvestido.setToolTipText("Saldo do valor investido, caso tenha sido informado no campo Investimentos.");
-        bottomLeftPanel.add(saldoInvestido, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bottomLeftPanel.add(saldoInvestido, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        valorizacaoReal = new JLabel();
+        valorizacaoReal.setText("Valorização Real:");
+        bottomLeftPanel.add(valorizacaoReal, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         upperLeftPanel = new JPanel();
         upperLeftPanel.setLayout(new GridLayoutManager(25, 6, new Insets(20, 20, 20, 20), -1, -1));
         upperLeftPanel.setFocusable(false);
@@ -767,12 +788,12 @@ public class SimuladorFinanciamento extends JFrame {
         amortizacaoExtraPanel = new JPanel();
         amortizacaoExtraPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(amortizacaoExtraPanel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        amortizacaoExtra = new JLabel();
-        Font amortizacaoExtraFont = this.$$$getFont$$$(null, Font.BOLD, 14, amortizacaoExtra.getFont());
-        if (amortizacaoExtraFont != null) amortizacaoExtra.setFont(amortizacaoExtraFont);
-        amortizacaoExtra.setText("Recorrência");
-        amortizacaoExtra.setToolTipText("Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas");
-        amortizacaoExtraPanel.add(amortizacaoExtra, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
+        recorrencia = new JLabel();
+        Font recorrenciaFont = this.$$$getFont$$$(null, Font.BOLD, 14, recorrencia.getFont());
+        if (recorrenciaFont != null) recorrencia.setFont(recorrenciaFont);
+        recorrencia.setText("Recorrência");
+        recorrencia.setToolTipText("Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas");
+        amortizacaoExtraPanel.add(recorrencia, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
         amortizacoesExtraCheckBox = new JCheckBox();
         Font amortizacoesExtraCheckBoxFont = this.$$$getFont$$$(null, Font.BOLD, 14, amortizacoesExtraCheckBox.getFont());
         if (amortizacoesExtraCheckBoxFont != null) amortizacoesExtraCheckBox.setFont(amortizacoesExtraCheckBoxFont);
@@ -873,6 +894,5 @@ public class SimuladorFinanciamento extends JFrame {
 
     private void createUIComponents() {
         tabs = new JTabbedPaneCloseButton(simulationsList);
-//        tabs = new JTabbedPane();
     }
 }
