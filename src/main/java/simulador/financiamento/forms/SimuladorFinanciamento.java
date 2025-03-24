@@ -7,10 +7,16 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import simulador.financiamento.dominio.*;
 import simulador.financiamento.dominio.amortizacao.AmortizacaoExtra;
+import simulador.financiamento.dominio.amortizacao.FGTS;
+import simulador.financiamento.dominio.amortizacao.Investimentos;
+import simulador.financiamento.dominio.amortizacao.Recorrencia;
+import simulador.financiamento.dominio.enums.AcoesResgate;
+import simulador.financiamento.dominio.enums.SistemaAmortizacaoEnum;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacaoFactory;
 import simulador.financiamento.tabela.ExcelWriter;
-import simulador.financiamento.sistemas.amortizacao.PRICE;
-import simulador.financiamento.sistemas.amortizacao.SAC;
-import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.dominio.sistemas.PRICE;
+import simulador.financiamento.dominio.sistemas.SAC;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
 import simulador.financiamento.utils.JTabbedPaneCloseButton;
 import simulador.financiamento.utils.SwingUtils;
 
@@ -145,23 +151,12 @@ public class SimuladorFinanciamento extends JFrame {
         preencheCamposOpcionaisDefault();
 
         calcularButton.addActionListener(e -> calcularFinanciamento());
+        advancedOptionsButton.addActionListener(e -> abrirOpcoesAvancadas());
         changeThemeButton.addActionListener(e -> toggleTheme());
         compararSimulacoesButton.addActionListener(e -> compararSimulacoes(simulationsList));
         downloadExcelButton.addActionListener(e -> fazerDownload());
         saveButton.addActionListener(e -> salvar());
         loadButton.addActionListener(e -> carregar());
-
-        advancedOptionsButton.addActionListener(e -> {
-            OpcoesAvancadasDialog dialog = new OpcoesAvancadasDialog(opcoesAvancadas);
-            dialog.setMinimumSize(new Dimension(400, 200));
-            dialog.setTitle("Opções Avançadas");
-            dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            dialog.setLocationRelativeTo(null);
-            dialog.pack();
-
-            opcoesAvancadas = dialog.showDialog();
-            System.out.println(opcoesAvancadas);
-        });
 
         tabs.addChangeListener(e -> {
             if (!simulationsList.isEmpty() && simulationsList.size() == tabs.getTabCount()) {
@@ -203,6 +198,18 @@ public class SimuladorFinanciamento extends JFrame {
         setVisible(true);
     }
 
+    private void abrirOpcoesAvancadas() {
+        OpcoesAvancadasDialog dialog = new OpcoesAvancadasDialog(opcoesAvancadas);
+        dialog.setMinimumSize(new Dimension(400, 200));
+        dialog.setTitle("Opções Avançadas");
+        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        dialog.setLocationRelativeTo(null);
+        dialog.pack();
+
+        opcoesAvancadas = dialog.showDialog();
+        System.out.println(opcoesAvancadas);
+    }
+
     private void salvar() {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream("simulationsList.txt");
@@ -234,7 +241,6 @@ public class SimuladorFinanciamento extends JFrame {
             simulationsList.forEach((sistemaAmortizacao) -> {
                 JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
                 JScrollPane scrollPane = new JScrollPane(jTable);
-
                 tabs.add(sistemaAmortizacao.getNomeFinanciamento(), scrollPane);
             });
 
@@ -398,63 +404,47 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private SistemaAmortizacao getSistemaAmortizacao(String sistemaSelecionado) {
-        SistemaAmortizacao sistemaAmortizacao;
-        if (SistemaAmortizacaoEnum.PRICE.getNome().equals(sistemaSelecionado)) {
-            sistemaAmortizacao = new PRICE(
-                    nomeFinanciamento.getText(),
-                    Double.valueOf(valorImovel.getText()),
-                    (double) percentualEntrada.getValue(),
-                    Double.valueOf(jurosAnual.getText()),
-                    Integer.valueOf(prazo.getText()),
-                    new Recorrencia(
-                            Double.valueOf(valorExtraInicial.getText()),
-                            Double.valueOf(percentProximoValorExtra.getText()),
-                            Double.valueOf(valorExtraMinimo.getText()),
-                            Integer.valueOf(mesInicial.getText()),
-                            Integer.valueOf(intervalo.getText()),
-                            Integer.valueOf(quantidadePagamentosExtra.getText()),
-                            qtdOcorrenciasCheckBox.isSelected()),
-                    new Investimentos(
-                            Double.valueOf(valorInvestido.getText()),
-                            Double.valueOf(rendimentoAnual.getText()),
-                            Integer.valueOf(resgate.getText()),
-                            (String) resgateComboBox.getSelectedItem()
-                    ),
-                    new FGTS(
-                            Double.valueOf(saldoFGTS.getText()),
-                            Double.valueOf(salarioBruto.getText())
-                    ),
-                    opcoesAvancadas
-            );
-        } else {
-            sistemaAmortizacao = new SAC(
-                    nomeFinanciamento.getText(),
-                    Double.valueOf(valorImovel.getText()),
-                    (double) percentualEntrada.getValue(),
-                    Double.valueOf(jurosAnual.getText()),
-                    Integer.valueOf(prazo.getText()),
-                    new Recorrencia(
-                            Double.valueOf(valorExtraInicial.getText()),
-                            Double.valueOf(percentProximoValorExtra.getText()),
-                            Double.valueOf(valorExtraMinimo.getText()),
-                            Integer.valueOf(mesInicial.getText()),
-                            Integer.valueOf(intervalo.getText()),
-                            Integer.valueOf(quantidadePagamentosExtra.getText()),
-                            qtdOcorrenciasCheckBox.isSelected()),
-                    new Investimentos(
-                            Double.valueOf(valorInvestido.getText()),
-                            Double.valueOf(rendimentoAnual.getText()),
-                            Integer.valueOf(resgate.getText()),
-                            (String) resgateComboBox.getSelectedItem()
-                    ),
-                    new FGTS(
-                            Double.valueOf(saldoFGTS.getText()),
-                            Double.valueOf(salarioBruto.getText())
-                    ),
-                    opcoesAvancadas
-            );
-        }
-        return sistemaAmortizacao;
+
+        Financiamento financiamento = new Financiamento(
+            nomeFinanciamento.getText(),
+            Double.valueOf(valorImovel.getText()),
+            (double) percentualEntrada.getValue(),
+            Double.valueOf(jurosAnual.getText()),
+            Integer.valueOf(prazo.getText())
+        );
+
+        Recorrencia recorrencia = new Recorrencia(
+            Double.valueOf(valorExtraInicial.getText()),
+            Double.valueOf(percentProximoValorExtra.getText()),
+            Double.valueOf(valorExtraMinimo.getText()),
+            Integer.valueOf(mesInicial.getText()),
+            Integer.valueOf(intervalo.getText()),
+            Integer.valueOf(quantidadePagamentosExtra.getText()),
+            qtdOcorrenciasCheckBox.isSelected()
+        );
+
+        Investimentos investimentos = new Investimentos(
+            Double.valueOf(valorInvestido.getText()),
+            Double.valueOf(rendimentoAnual.getText()),
+            Integer.valueOf(resgate.getText()),
+            (String) resgateComboBox.getSelectedItem()
+        );
+
+        FGTS fgts = new FGTS(
+            Double.valueOf(saldoFGTS.getText()),
+            Double.valueOf(salarioBruto.getText())
+        );
+
+        SistemaAmortizacaoEnum sistema = SistemaAmortizacaoEnum.getByName(sistemaSelecionado);
+
+        return SistemaAmortizacaoFactory.getSistemaAmortizacao(
+            sistema,
+            financiamento,
+            recorrencia,
+            investimentos,
+            fgts,
+            opcoesAvancadas
+        );
     }
 
     private void resetFields() {

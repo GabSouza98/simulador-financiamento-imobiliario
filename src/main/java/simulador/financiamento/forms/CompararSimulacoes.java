@@ -3,7 +3,7 @@ package simulador.financiamento.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
 import simulador.financiamento.utils.Constants;
 
 import javax.swing.*;

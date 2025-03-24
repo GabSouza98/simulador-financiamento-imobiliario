@@ -1,7 +1,7 @@
-package simulador.financiamento.dominio;
+package simulador.financiamento.dominio.amortizacao;
 
 import lombok.Getter;
-import simulador.financiamento.dominio.amortizacao.AmortizacaoExtra;
+import simulador.financiamento.dominio.enums.AcoesResgate;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
 

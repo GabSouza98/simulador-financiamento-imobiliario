@@ -1,14 +1,13 @@
 package simulador.financiamento.utils;
 
 import lombok.Setter;
-import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Map;
 
 @Setter
 public class JTabbedPaneCloseButton extends JTabbedPane {

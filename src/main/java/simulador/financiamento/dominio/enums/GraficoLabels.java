@@ -1,4 +1,4 @@
-package simulador.financiamento.dominio;
+package simulador.financiamento.dominio.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

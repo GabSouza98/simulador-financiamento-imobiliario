@@ -1,6 +1,6 @@
 package simulador.financiamento.utils;
 
-import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

@@ -18,6 +18,7 @@ public class OpcoesAvancadas implements Serializable {
 
     @Setter
     private Double valorImovelInicial;
+
     private Double valorImovelValorizado;
     private Double valorImovelInflacao;
 

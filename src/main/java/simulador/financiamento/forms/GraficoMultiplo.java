@@ -15,8 +15,8 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import simulador.financiamento.dominio.GraficoLabels;
-import simulador.financiamento.sistemas.amortizacao.SistemaAmortizacao;
+import simulador.financiamento.dominio.enums.GraficoLabels;
+import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;

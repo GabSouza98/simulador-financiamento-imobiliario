@@ -1,8 +1,7 @@
-package simulador.financiamento.dominio;
+package simulador.financiamento.dominio.amortizacao;
 
 import lombok.Getter;
 import lombok.Setter;
-import simulador.financiamento.dominio.amortizacao.AmortizacaoExtra;
 
 import java.io.Serializable;
 import java.util.Objects;

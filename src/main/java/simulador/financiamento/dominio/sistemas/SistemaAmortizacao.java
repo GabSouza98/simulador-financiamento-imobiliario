@@ -1,9 +1,13 @@
-package simulador.financiamento.sistemas.amortizacao;
+package simulador.financiamento.dominio.sistemas;
 
 import lombok.Getter;
 import lombok.Setter;
 import simulador.financiamento.dominio.*;
 import simulador.financiamento.dominio.amortizacao.AmortizacaoExtra;
+import simulador.financiamento.dominio.amortizacao.FGTS;
+import simulador.financiamento.dominio.amortizacao.Investimentos;
+import simulador.financiamento.dominio.amortizacao.Recorrencia;
+import simulador.financiamento.dominio.enums.SistemaAmortizacaoEnum;
 import simulador.financiamento.utils.Constants;
 import simulador.financiamento.utils.Conversor;
 
@@ -39,22 +43,18 @@ public abstract class SistemaAmortizacao implements Serializable {
     protected List<Double> valorPagoMensalList = new ArrayList<>();
     protected List<String> tabela = new ArrayList<>();
 
-    public SistemaAmortizacao(String nomeFinanciamento,
-                              Double valorImovel,
-                              Double percentualEntrada,
-                              Double jurosAnual,
-                              Integer prazo,
+    public SistemaAmortizacao(Financiamento financiamento,
                               Recorrencia recorrencia,
                               Investimentos investimentos,
                               FGTS fgts,
                               OpcoesAvancadas opcoesAvancadas) {
 
         //Campos obrigatórios
-        this.nomeFinanciamento = nomeFinanciamento;
-        this.valorImovel = valorImovel;
-        this.percentualEntrada = percentualEntrada/100;
-        this.jurosAnual = jurosAnual/100;
-        this.prazo = prazo;
+        this.nomeFinanciamento = financiamento.getNomeFinanciamento();
+        this.valorImovel = financiamento.getValorImovel();
+        this.percentualEntrada = financiamento.getPercentualEntrada()/100;
+        this.jurosAnual = financiamento.getJurosAnual()/100;
+        this.prazo = financiamento.getPrazo();
 
         //Inicialização de parâmetros
         this.taxaJurosMensal = Conversor.converterTaxaAnualParaMensal(jurosAnual);
@@ -66,7 +66,6 @@ public abstract class SistemaAmortizacao implements Serializable {
         this.amortizacaoExtraList = List.of(recorrencia, investimentos, fgts);
 
         this.tabela.add(createHeaderRow());
-        System.out.println(this);
     }
 
     public void calcularFinanciamento() {
@@ -90,7 +89,8 @@ public abstract class SistemaAmortizacao implements Serializable {
         //J = SD * i
         jurosMensal = saldoDevedor * taxaJurosMensal;
 
-        calcularMesEspecifico();
+        atualizarParcela();
+        atualizarAmortizacao();
 
         valorPagoMensal = parcela;
 
@@ -142,8 +142,8 @@ public abstract class SistemaAmortizacao implements Serializable {
                 numeroParcelas, amortizacaoMensal, jurosMensal, parcela, valorPagoMensal - parcela, valorPagoMensal, saldoDevedor));
     }
 
-    protected abstract void calcularMesEspecifico();
-
+    protected abstract void atualizarParcela();
+    protected abstract void atualizarAmortizacao();
     public abstract SistemaAmortizacaoEnum getSistemaAmortizacao();
 
 }
