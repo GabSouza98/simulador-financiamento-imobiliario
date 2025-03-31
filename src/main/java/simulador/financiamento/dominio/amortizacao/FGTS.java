@@ -10,12 +10,14 @@ import java.io.Serializable;
 public class FGTS implements AmortizacaoExtra, Serializable {
     private Double saldoAtual;
     private final Double salario;
+    private final Double saldoInicial;
     private final Double rendimentoAnual = Constants.RENDIMENTO_ANUAL_FGTS; //3%
     private final Double rendimentoMensal = Conversor.converterTaxaAnualParaMensal(rendimentoAnual);
     private final Double aliquotaMensal = Constants.ALIQUOTA_MENSAL_FGTS; //8%
 
     public FGTS(Double saldoAtual, Double salario) {
         this.saldoAtual = saldoAtual;
+        this.saldoInicial = saldoAtual;
         this.salario = salario;
     }
 

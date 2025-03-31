@@ -495,19 +495,21 @@ public class SimuladorFinanciamento extends JFrame {
 
         FGTS fgts = AmortizacaoExtra.buscarAmortizacaoExtra(FGTS.class, sistemaAmortizacao.getAmortizacaoExtraList());
         salarioBruto.setText(fgts.getSalario().toString());
-        saldoFGTS.setText(fgts.getSaldoAtual().toString());
+        saldoFGTS.setText(fgts.getSaldoInicial().toString());
+
+        OpcoesAvancadas opcoesAvanc = sistemaAmortizacao.getOpcoesAvancadas();
 
         //Bottom Fields
         valorPagoTotalField.setText(String.format("Valor Pago Total: R$ %,.2f", sistemaAmortizacao.getValorPagoTotal()));
         numeroParcelasField.setText("Número de Parcelas / Prazo: " + sistemaAmortizacao.getNumeroParcelas() + "/" + sistemaAmortizacao.getPrazo());
         ratioValorPagoTotal.setText(String.format("Valor Pago Total / Valor Imovel: %.2f", sistemaAmortizacao.getValorPagoTotal() / sistemaAmortizacao.getValorImovel()));
         anosConclusaoField.setText(String.format("Quitado em: %.1f anos", (double) sistemaAmortizacao.getNumeroParcelas() / 12));
-        valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado()));
-        valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
-        valorizacaoReal.setText(String.format("Valorização Real: R$ %,.2f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado() - sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao()));
+        valorImovelValorizado.setText(String.format("Valor Imóvel Valorizado: R$ %,.2f", opcoesAvanc.getValorImovelValorizado()));
+        valorImovelInflacao.setText(String.format("Valor Imóvel Inflação: R$ %,.2f", opcoesAvanc.getValorImovelInflacao()));
+        valorizacaoReal.setText(String.format("Valorização Real: R$ %,.2f", opcoesAvanc.getValorImovelValorizado() - opcoesAvanc.getValorImovelInflacao()));
         saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", investimentos.getValorInvestido()));
 
-        opcoesAvancadas = sistemaAmortizacao.getOpcoesAvancadas();
+        opcoesAvancadas = opcoesAvanc;
 
         System.out.println(simulationsList);
     }
