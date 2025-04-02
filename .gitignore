@@ -36,3 +36,12 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+SimuladorFinanciamento
+SimuladorFinanciamento.zip
+.SimuladorFinanciamento
+.SimuladorFinanciamento.zip
+/SimuladorFinanciamento
+SimuladorFinanciamento/
+simulationsList
+.simulationsList

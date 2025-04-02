@@ -235,7 +235,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Nome da simulação de financiamento"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -265,7 +267,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Valor do Imóvel em reais"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -300,6 +304,7 @@
                               <paintTicks value="false"/>
                               <paintTrack value="true"/>
                               <snapToTicks value="true"/>
+                              <toolTipText value="Percentual de entrada"/>
                               <valueIsAdjusting value="false"/>
                             </properties>
                           </component>
@@ -331,7 +336,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Júros Efetivo Anual"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -363,7 +370,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Valor que será amortizado na primeira recorrência"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -396,7 +405,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Percentual para amortizar a partir do valor anterior. Caso seja 100%, o valor será constante."/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -421,6 +432,7 @@
                             </constraints>
                             <properties>
                               <text value="Valor Mínimo (R$)"/>
+                              <toolTipText value="Valor mínimo para amortização"/>
                             </properties>
                           </component>
                           <component id="8d0d4" class="javax.swing.JTextField" binding="valorExtraMinimo">
@@ -429,7 +441,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Valor mínimo para amortização"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -459,7 +473,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Valor investido em reais"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -489,7 +505,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Rendimento Anual bruto do produto de investimento contratado."/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -519,7 +537,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Salário bruto em reais"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -549,7 +569,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Saldo inicial no FGTS"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -579,6 +601,7 @@
                             </constraints>
                             <properties>
                               <text value=""/>
+                              <toolTipText value="Caso marcado, todos os campos serão resetados após calcular a simulação"/>
                             </properties>
                           </component>
                         </children>
@@ -609,7 +632,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Selecione o sistema de amortização"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -639,7 +664,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Duração do financiamento"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -669,7 +696,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Mês da primeira amortização"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -690,7 +719,7 @@
                             </constraints>
                             <properties>
                               <text value="Intervalo"/>
-                              <toolTipText value="Intervalo entre cada amortização"/>
+                              <toolTipText value="Intervalo entre cada amortização (em meses)"/>
                             </properties>
                           </component>
                           <component id="2f167" class="javax.swing.JTextField" binding="intervalo">
@@ -699,7 +728,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Intervalo entre cada amortização (em meses)"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -711,7 +742,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="299dc" class="javax.swing.JLabel">
+                          <component id="299dc" class="javax.swing.JLabel" binding="repeticoesLabel">
                             <constraints>
                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                                 <minimum-size width="150" height="-1"/>
@@ -723,13 +754,15 @@
                               <toolTipText value="Quantidade de vezes que será amortizado."/>
                             </properties>
                           </component>
-                          <component id="1efb0" class="javax.swing.JTextField" binding="quantidadePagamentosExtra">
+                          <component id="1efb0" class="javax.swing.JTextField" binding="repeticoes">
                             <constraints>
                               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="100" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Quantidade de vezes que será amortizado."/>
+                            </properties>
                           </component>
                           <component id="c39d2" class="javax.swing.JCheckBox" binding="qtdOcorrenciasCheckBox">
                             <constraints>
@@ -771,6 +804,7 @@
                             <properties>
                               <font size="14" style="1"/>
                               <text value=""/>
+                              <toolTipText value="Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas"/>
                             </properties>
                           </component>
                         </children>
@@ -802,6 +836,7 @@
                             </constraints>
                             <properties>
                               <text value=""/>
+                              <toolTipText value="Sessão destinada a considerar amortizações a partir dos lucros de um investimento, ou simular o valor total investido ao término do financiamento. O IR considerado é de 15%, alíquota vigente para aplicações financeiras de no mínimo 2 anos."/>
                             </properties>
                           </component>
                         </children>
@@ -834,6 +869,7 @@
                             </constraints>
                             <properties>
                               <text value=""/>
+                              <toolTipText value="Sessão destinada a considerar amortizações a partir do FGTS. O intervalo considerado para amortizar é a cada 2 anos, com rendimento de 3% ao ano, e com aportes iguais a 8% do salário bruto mensalmente."/>
                             </properties>
                           </component>
                         </children>
@@ -897,7 +933,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Tempo até o resgate em anos"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
@@ -927,7 +965,9 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <toolTipText value="Ação a ser tomada no momento do resgate"/>
+                            </properties>
                           </component>
                         </children>
                       </grid>
