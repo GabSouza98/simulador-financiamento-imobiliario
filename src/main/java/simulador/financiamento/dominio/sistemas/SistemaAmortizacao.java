@@ -94,17 +94,24 @@ public abstract class SistemaAmortizacao implements Serializable {
 
         valorPagoMensal = parcela;
 
-        amortizacaoExtraList.forEach(amortizacaoExtra -> {
-            if (amortizacaoExtra.deveAmortizar(numeroParcelas)) {
-                var valorExtra = amortizacaoExtra.amortizar();
-                valorPagoMensal += valorExtra;
-                amortizacaoMensal += valorExtra;
-            }
-        });
-
-        saldoDevedor = saldoDevedor - amortizacaoMensal;
-
+        //Até aqui a amortizacaoMensal é proveniente apenas da parcela
+        saldoDevedor -= amortizacaoMensal;
         checarSaldoDevedorNegativo();
+
+        //Só contabiliza as outras formas de amortização se o saldoDevedor ainda for positivo
+        if (saldoDevedor > 0) {
+            amortizacaoExtraList.forEach(amortizacaoExtra -> {
+                if (amortizacaoExtra.deveAmortizar(numeroParcelas) && saldoDevedor > 0) {
+                    var valorExtra = amortizacaoExtra.amortizar();
+                    if (valorExtra > 0) {
+                        valorPagoMensal += valorExtra;
+                        amortizacaoMensal += valorExtra;
+                        saldoDevedor -= valorExtra;
+                        checarSaldoDevedorNegativoPorAmortizacaoExtra();
+                    }
+                }
+            });
+        }
 
         atualizarCampos();
 
@@ -131,7 +138,17 @@ public abstract class SistemaAmortizacao implements Serializable {
             valorPagoMensal = valorPagoMensal + saldoDevedor;
             amortizacaoMensal = amortizacaoMensal + saldoDevedor;
             saldoDevedor = 0.0;
+            //Corrige a ultima parcela PRICE
             parcela = amortizacaoMensal + jurosMensal;
+        }
+    }
+
+    private void checarSaldoDevedorNegativoPorAmortizacaoExtra() {
+        if (saldoDevedor < 0) {
+            //Caso o saldo devedor fique negativo, o valorPagoMensal deve ser apenas o necessário para zerar o saldo devedor.
+            valorPagoMensal = valorPagoMensal + saldoDevedor;
+            amortizacaoMensal = amortizacaoMensal + saldoDevedor;
+            saldoDevedor = 0.0;
         }
     }
 

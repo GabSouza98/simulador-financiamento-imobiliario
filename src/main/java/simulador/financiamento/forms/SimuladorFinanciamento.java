@@ -104,7 +104,7 @@ public class SimuladorFinanciamento extends JFrame {
     private JPanel amortizacaoExtraPanel;
     private JPanel investimentosPanel;
     private JPanel fgtsPanel;
-    private JCheckBox qtdOcorrenciasCheckBox;
+    private JCheckBox sempreCheckBox;
     private JLabel anosConclusaoField;
     private JLabel valorImovelValorizado;
     private JLabel valorImovelInflacao;
@@ -195,11 +195,11 @@ public class SimuladorFinanciamento extends JFrame {
             }
         });
 
-        qtdOcorrenciasCheckBox.addActionListener(e -> {
-            repeticoes.setEnabled(!qtdOcorrenciasCheckBox.isSelected());
+        sempreCheckBox.addActionListener(e -> {
+            repeticoes.setEnabled(!sempreCheckBox.isSelected());
         });
 
-        qtdOcorrenciasCheckBox.setSelected(false);
+        sempreCheckBox.setSelected(false);
         repeticoes.setEnabled(true);
 
         // Set the frame visible
@@ -428,7 +428,7 @@ public class SimuladorFinanciamento extends JFrame {
                 Integer.valueOf(mesInicial.getText()),
                 Integer.valueOf(intervalo.getText()),
                 Integer.valueOf(repeticoes.getText()),
-                qtdOcorrenciasCheckBox.isSelected()
+                sempreCheckBox.isSelected()
         );
 
         Investimentos investimentos = new Investimentos(
@@ -975,12 +975,12 @@ public class SimuladorFinanciamento extends JFrame {
         repeticoes = new JTextField();
         repeticoes.setToolTipText("Quantidade de vezes que será amortizado.");
         quantidadePanel.add(repeticoes, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
-        qtdOcorrenciasCheckBox = new JCheckBox();
-        qtdOcorrenciasCheckBox.setEnabled(true);
-        qtdOcorrenciasCheckBox.setSelected(true);
-        qtdOcorrenciasCheckBox.setText("Sempre");
-        qtdOcorrenciasCheckBox.setToolTipText("Caso selecionado, as amortizações serão recorrentes até o final do financiamento");
-        quantidadePanel.add(qtdOcorrenciasCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        sempreCheckBox = new JCheckBox();
+        sempreCheckBox.setEnabled(true);
+        sempreCheckBox.setSelected(true);
+        sempreCheckBox.setText("Sempre");
+        sempreCheckBox.setToolTipText("Caso selecionado, as amortizações serão recorrentes até o final do financiamento");
+        quantidadePanel.add(sempreCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         amortizacaoExtraPanel = new JPanel();
         amortizacaoExtraPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         upperLeftPanel.add(amortizacaoExtraPanel, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
