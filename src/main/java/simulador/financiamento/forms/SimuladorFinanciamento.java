@@ -199,6 +199,9 @@ public class SimuladorFinanciamento extends JFrame {
             repeticoes.setEnabled(!qtdOcorrenciasCheckBox.isSelected());
         });
 
+        qtdOcorrenciasCheckBox.setSelected(false);
+        repeticoes.setEnabled(true);
+
         // Set the frame visible
         setVisible(true);
     }
@@ -295,7 +298,6 @@ public class SimuladorFinanciamento extends JFrame {
         mesInicialPanel.setVisible(false);
         intervaloPanel.setVisible(false);
         quantidadePanel.setVisible(false);
-        repeticoes.setEnabled(false);
     }
 
     private void habilitaCamposAmortizacao() {
@@ -482,7 +484,7 @@ public class SimuladorFinanciamento extends JFrame {
         valorImovel.setText(sistemaAmortizacao.getValorImovel().toString());
         percentualEntrada.setValue((int) (sistemaAmortizacao.getPercentualEntrada() * 100));
         sistemaAmortizacaoComboBox.setSelectedIndex(sistemaAmortizacao.getSistemaAmortizacao().getIndex());
-        jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual() * 100));
+        jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual()));
         prazo.setText(String.valueOf(sistemaAmortizacao.getPrazo()));
 
         Recorrencia recorrencia = AmortizacaoExtra.buscarAmortizacaoExtra(Recorrencia.class, sistemaAmortizacao.getAmortizacaoExtraList());
@@ -974,6 +976,7 @@ public class SimuladorFinanciamento extends JFrame {
         repeticoes.setToolTipText("Quantidade de vezes que será amortizado.");
         quantidadePanel.add(repeticoes, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
         qtdOcorrenciasCheckBox = new JCheckBox();
+        qtdOcorrenciasCheckBox.setEnabled(true);
         qtdOcorrenciasCheckBox.setSelected(true);
         qtdOcorrenciasCheckBox.setText("Sempre");
         qtdOcorrenciasCheckBox.setToolTipText("Caso selecionado, as amortizações serão recorrentes até o final do financiamento");

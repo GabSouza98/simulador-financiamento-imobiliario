@@ -53,7 +53,7 @@ public abstract class SistemaAmortizacao implements Serializable {
         this.nomeFinanciamento = financiamento.getNomeFinanciamento();
         this.valorImovel = financiamento.getValorImovel();
         this.percentualEntrada = financiamento.getPercentualEntrada()/100;
-        this.jurosAnual = financiamento.getJurosAnual()/100;
+        this.jurosAnual = financiamento.getJurosAnual();
         this.prazo = financiamento.getPrazo();
 
         //Inicialização de parâmetros
