@@ -214,7 +214,9 @@
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Nome da simulação de financiamento"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="58c88" class="javax.swing.JLabel" binding="nomeFinanciamentoLabel">
@@ -246,7 +248,9 @@
                         <constraints>
                           <grid row="1" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Valor do Imóvel em reais"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="12f19" class="javax.swing.JLabel" binding="valorImovelLabel">
@@ -278,7 +282,9 @@
                         <constraints>
                           <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Percentual de entrada"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="3c149" class="javax.swing.JLabel" binding="percentualEntradaLabel">
@@ -315,7 +321,9 @@
                         <constraints>
                           <grid row="4" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Júros Efetivo Anual"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="e8fa2" class="javax.swing.JLabel" binding="jurosAnualLabel">
@@ -349,6 +357,7 @@
                         </constraints>
                         <properties>
                           <enabled value="true"/>
+                          <toolTipText value="Valor que será amortizado na primeira recorrência"/>
                         </properties>
                         <border type="none"/>
                         <children>
@@ -371,6 +380,7 @@
                               </grid>
                             </constraints>
                             <properties>
+                              <text value=" "/>
                               <toolTipText value="Valor que será amortizado na primeira recorrência"/>
                             </properties>
                           </component>
@@ -381,7 +391,9 @@
                         <constraints>
                           <grid row="8" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Percentual para amortizar a partir do valor anterior. Caso seja 100%, o valor será constante."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="6a159" class="javax.swing.JLabel" binding="percentProximoValorExtraLabel">
@@ -419,7 +431,7 @@
                           </grid>
                         </constraints>
                         <properties>
-                          <toolTipText value="Valor mínimo que deverá ser amortizado."/>
+                          <toolTipText value="Valor mínimo para amortização"/>
                         </properties>
                         <border type="none"/>
                         <children>
@@ -452,7 +464,9 @@
                         <constraints>
                           <grid row="14" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Valor investido em reais"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="3f838" class="javax.swing.JLabel" binding="valorInvestidoLabel">
@@ -484,7 +498,9 @@
                         <constraints>
                           <grid row="15" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Rendimento Anual bruto do produto de investimento contratado."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="bf9e8" class="javax.swing.JLabel" binding="rendimentoAnualLabel">
@@ -516,7 +532,9 @@
                         <constraints>
                           <grid row="19" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Salário bruto em reais"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="bf8dc" class="javax.swing.JLabel">
@@ -548,7 +566,9 @@
                         <constraints>
                           <grid row="20" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Saldo inicial no FGTS"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="e9759" class="javax.swing.JLabel">
@@ -580,7 +600,9 @@
                         <constraints>
                           <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Selecione o sistema de amortização"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="6de04" class="javax.swing.JLabel">
@@ -612,7 +634,9 @@
                         <constraints>
                           <grid row="5" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Duração do financiamento"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="ffcd1" class="javax.swing.JLabel" binding="prazoLabel">
@@ -644,7 +668,9 @@
                         <constraints>
                           <grid row="10" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Mês da primeira amortização"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="c7f68" class="javax.swing.JLabel" binding="mesInicialLabel">
@@ -676,7 +702,9 @@
                         <constraints>
                           <grid row="11" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Intervalo entre cada amortização (em meses)"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="da284" class="javax.swing.JLabel" binding="intervaloLabel">
@@ -708,7 +736,9 @@
                         <constraints>
                           <grid row="12" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Quantidade de vezes que será amortizado."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="299dc" class="javax.swing.JLabel" binding="repeticoesLabel">
@@ -751,7 +781,9 @@
                         <constraints>
                           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="86a2" class="javax.swing.JLabel" binding="recorrencia">
@@ -784,7 +816,9 @@
                         <constraints>
                           <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Sessão destinada a considerar amortizações a partir dos lucros de um investimento, ou simular o valor total investido ao término do financiamento. O IR considerado é de 15%, alíquota vigente para aplicações financeiras de no mínimo 2 anos."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="deaeb" class="javax.swing.JLabel" binding="investimentosLabel">
@@ -816,7 +850,9 @@
                         <constraints>
                           <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Sessão destinada a considerar amortizações a partir do FGTS. O intervalo considerado para amortizar é a cada 2 anos, com rendimento de 3% ao ano, e com aportes iguais a 8% do salário bruto mensalmente."/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="a6db" class="javax.swing.JLabel" binding="fgtsLabel">
@@ -882,7 +918,9 @@
                         <constraints>
                           <grid row="16" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Tempo até o resgate em anos"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="32507" class="javax.swing.JLabel" binding="resgateLabel">
@@ -914,7 +952,9 @@
                         <constraints>
                           <grid row="17" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <toolTipText value="Ação a ser tomada no momento do resgate"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <component id="35c95" class="javax.swing.JLabel" binding="acaoNoResgate">

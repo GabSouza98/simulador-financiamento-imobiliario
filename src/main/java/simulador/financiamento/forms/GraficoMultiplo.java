@@ -11,6 +11,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -42,7 +43,7 @@ public class GraficoMultiplo extends JFrame {
 
     private final ArrayList<SistemaAmortizacao> simulationsList;
 
-    private final ArrayList<Integer> selectedIndexes = new ArrayList<>();
+    private final List<Integer> selectedIndexes = new ArrayList<>();
 
     public GraficoMultiplo(ArrayList<SistemaAmortizacao> simulationsList) {
         this.simulationsList = simulationsList;
@@ -151,15 +152,17 @@ public class GraficoMultiplo extends JFrame {
             }
 
             // Adiciona cada série à sua respectiva coleção
-            for (int i = 1; i < seriesCollection.length; i++) {
+            for (int i = 0; i < seriesCollection.length; i++) {
                 seriesCollection[i].addSeries(series[i]);
             }
         });
 
         selectedIndexes.forEach(index -> {
             final XYItemRenderer renderer = new StandardXYItemRenderer();
+            renderer.setDefaultStroke(new BasicStroke(2.5f));
+            ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
 
-            if (index > 1) {
+            if (!plot.getSubplots().isEmpty()) {
                 var firstCollection = seriesCollection[1]; //a seriesCollection[0] guarda o número de prestações e não é utilizado.
 
                 var firstRenderer = plot.getSubplots().get(0).getRenderer();
@@ -227,6 +230,9 @@ public class GraficoMultiplo extends JFrame {
 
         GraficoLabels graficoLabel = GraficoLabels.getGraficoLabelByIndex(index);
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(graficoLabel.getTitulo(), "Número de Parcelas", graficoLabel.getYLabel(), seriesCollection);
+        XYItemRenderer renderer = jFreeChart.getXYPlot().getRenderer();
+        renderer.setDefaultStroke(new BasicStroke(2.5f));
+        ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
         ChartPanel chartPanel = new ChartPanel(jFreeChart, true, true, true, true, true);
         showChart(graficoLabel.getTitulo(), chartPanel);
     }

@@ -6,6 +6,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.renderer.AbstractRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.enums.GraficoLabels;
@@ -85,6 +87,10 @@ public class GraficoIndividual extends JFrame {
 
         GraficoLabels graficoLabel = GraficoLabels.getGraficoLabelByIndex(index);
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(graficoLabel.getTitulo(), "Número de Parcelas", graficoLabel.getYLabel(), seriesCollection);
+        XYItemRenderer renderer = jFreeChart.getXYPlot().getRenderer();
+        renderer.setDefaultStroke(new BasicStroke(2.5f));
+        ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
+
         ChartPanel chartPanel = new ChartPanel(jFreeChart,
                 900, 600,
                 900, 600,
