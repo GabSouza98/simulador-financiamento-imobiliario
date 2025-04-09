@@ -96,7 +96,7 @@ public class SimuladorFinanciamento extends JFrame {
     private JLabel recorrencia;
     private JLabel investimentosLabel;
     private JLabel fgtsLabel;
-    private JCheckBox amortizacoesExtraCheckBox;
+    private JCheckBox recorrenciaCheckBox;
     private JCheckBox investimentosCheckBox;
     private JCheckBox fgtsCheckBox;
     private JPanel amortizacaoExtraPanel;
@@ -149,7 +149,7 @@ public class SimuladorFinanciamento extends JFrame {
         defineOpcoesSistemasAmortizacao();
         defineOpcoesResgate();
         defineFontes();
-        desabilitaCamposAmortizacao();
+        desabilitaCamposRecorrencia();
         desabilitaCamposInvestimentos();
         desabilitaCamposFgts();
         preencheCamposOpcionaisDefault();
@@ -171,11 +171,11 @@ public class SimuladorFinanciamento extends JFrame {
             }
         });
 
-        amortizacoesExtraCheckBox.addActionListener(e -> {
-            if (amortizacoesExtraCheckBox.isSelected()) {
-                habilitaCamposAmortizacao();
+        recorrenciaCheckBox.addActionListener(e -> {
+            if (recorrenciaCheckBox.isSelected()) {
+                habilitaCamposRecorrencia();
             } else {
-                desabilitaCamposAmortizacao();
+                desabilitaCamposRecorrencia();
             }
         });
 
@@ -268,6 +268,8 @@ public class SimuladorFinanciamento extends JFrame {
             int selectedTab = tabs.getSelectedIndex();
             SistemaAmortizacao sistemaAmortizacao = simulationsList.get(selectedTab);
             excelWriter.writeTable(sistemaAmortizacao);
+
+            new InformacaoDialog("Excel Salvo", "Excel salvo com sucesso!");
         }
     }
 
@@ -292,7 +294,7 @@ public class SimuladorFinanciamento extends JFrame {
         resgateComboBox.addItem(AcoesResgate.REINVESTIR.getNome());
     }
 
-    private void desabilitaCamposAmortizacao() {
+    private void desabilitaCamposRecorrencia() {
         valorExtraInicialPanel.setVisible(false);
         percentualProximoValorExtraPanel.setVisible(false);
         valorExtraMinimoPanel.setVisible(false);
@@ -301,7 +303,7 @@ public class SimuladorFinanciamento extends JFrame {
         quantidadePanel.setVisible(false);
     }
 
-    private void habilitaCamposAmortizacao() {
+    private void habilitaCamposRecorrencia() {
         valorExtraInicialPanel.setVisible(true);
         percentualProximoValorExtraPanel.setVisible(true);
         valorExtraMinimoPanel.setVisible(true);
@@ -335,18 +337,28 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private void preencheCamposOpcionaisDefault() {
+        defaultRecorrencia();
+        defaultInvestimentos();
+        defaultFGTS();
+    }
+
+    private void defaultRecorrencia() {
         valorExtraInicial.setText("0");
         percentProximoValorExtra.setText("100");
         valorExtraMinimo.setText("0");
         mesInicial.setText("1");
         intervalo.setText("1");
         repeticoes.setText("0");
+    }
 
+    private void defaultInvestimentos() {
         valorInvestido.setText("0");
         rendimentoAnual.setText("0");
         resgate.setText("2");
         resgateComboBox.setSelectedIndex(0);
+    }
 
+    private void defaultFGTS() {
         salarioBruto.setText("0");
         saldoFGTS.setText("0");
     }
@@ -417,6 +429,19 @@ public class SimuladorFinanciamento extends JFrame {
                 Double.valueOf(jurosAnual.getText()),
                 Integer.valueOf(prazo.getText())
         );
+
+        //Se os campos não estiverem selecionados, não serão considerados.
+        if (!recorrenciaCheckBox.isSelected()) {
+            defaultRecorrencia();
+        }
+
+        if (!investimentosCheckBox.isSelected()) {
+            defaultInvestimentos();
+        }
+
+        if (!fgtsCheckBox.isSelected()) {
+            defaultFGTS();
+        }
 
         Recorrencia recorrencia = new Recorrencia(
                 Double.valueOf(valorExtraInicial.getText()),
@@ -492,15 +517,40 @@ public class SimuladorFinanciamento extends JFrame {
         intervalo.setText(recorrencia.getIntervalo().toString());
         repeticoes.setText(recorrencia.getQuantidadeAmortizacoesDesejadas().toString());
 
+        //Marca o campo caso tenha valor
+        if (recorrencia.getValorExtra() > 0) {
+            recorrenciaCheckBox.setSelected(true);
+            habilitaCamposRecorrencia();
+        } else {
+            recorrenciaCheckBox.setSelected(false);
+            desabilitaCamposRecorrencia();
+        }
+
         Investimentos investimentos = AmortizacaoExtra.buscarAmortizacaoExtra(Investimentos.class, sistemaAmortizacao.getAmortizacaoExtraList());
         valorInvestido.setText(investimentos.getValorInicialPrimeiroAporte().toString());
         rendimentoAnual.setText(investimentos.getRendimentoAnual().toString());
         resgate.setText(investimentos.getPrazoResgateAnos().toString());
         resgateComboBox.setSelectedIndex(investimentos.getAcao().getIndex());
 
+        if (investimentos.getValorInicialPrimeiroAporte() > 0) {
+            investimentosCheckBox.setSelected(true);
+            habilitaCamposInvestimentos();
+        } else {
+            investimentosCheckBox.setSelected(false);
+            desabilitaCamposInvestimentos();
+        }
+
         FGTS fgts = AmortizacaoExtra.buscarAmortizacaoExtra(FGTS.class, sistemaAmortizacao.getAmortizacaoExtraList());
         salarioBruto.setText(fgts.getSalario().toString());
         saldoFGTS.setText(fgts.getSaldoInicial().toString());
+
+        if (fgts.getSalario() > 0) {
+            fgtsCheckBox.setSelected(true);
+            habilitaCamposFgts();
+        } else {
+            fgtsCheckBox.setSelected(false);
+            desabilitaCamposFgts();
+        }
 
         OpcoesAvancadas opcoesAvanc = sistemaAmortizacao.getOpcoesAvancadas();
 
@@ -993,12 +1043,12 @@ public class SimuladorFinanciamento extends JFrame {
         recorrencia.setText("Recorrência");
         recorrencia.setToolTipText("Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas");
         amortizacaoExtraPanel.add(recorrencia, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(150, -1), new Dimension(100, -1), null, 0, false));
-        amortizacoesExtraCheckBox = new JCheckBox();
-        Font amortizacoesExtraCheckBoxFont = this.$$$getFont$$$(null, Font.BOLD, 14, amortizacoesExtraCheckBox.getFont());
-        if (amortizacoesExtraCheckBoxFont != null) amortizacoesExtraCheckBox.setFont(amortizacoesExtraCheckBoxFont);
-        amortizacoesExtraCheckBox.setText("");
-        amortizacoesExtraCheckBox.setToolTipText("Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas");
-        amortizacaoExtraPanel.add(amortizacoesExtraCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        recorrenciaCheckBox = new JCheckBox();
+        Font recorrenciaCheckBoxFont = this.$$$getFont$$$(null, Font.BOLD, 14, recorrenciaCheckBox.getFont());
+        if (recorrenciaCheckBoxFont != null) recorrenciaCheckBox.setFont(recorrenciaCheckBoxFont);
+        recorrenciaCheckBox.setText("");
+        recorrenciaCheckBox.setToolTipText("Sessão destinada a considerar amortizações recorrentes, conforme valores, intervalo e repetições desejadas");
+        amortizacaoExtraPanel.add(recorrenciaCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         investimentosPanel = new JPanel();
         investimentosPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         investimentosPanel.setToolTipText("Sessão destinada a considerar amortizações a partir dos lucros de um investimento, ou simular o valor total investido ao término do financiamento. O IR considerado é de 15%, alíquota vigente para aplicações financeiras de no mínimo 2 anos.");
