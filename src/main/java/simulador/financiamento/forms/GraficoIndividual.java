@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static simulador.financiamento.utils.Constants.DELIMITER;
+import static simulador.financiamento.utils.Constants.sanitize;
+
 public class GraficoIndividual extends JFrame {
     private JPanel buttonsGroup;
     private JRadioButton amortizacaoRadio;
@@ -77,9 +80,9 @@ public class GraficoIndividual extends JFrame {
             List<String> tabela = sistemaAmortizacao.getTabela();
             //Starts at 2 to skip header in table and first row which is 0 in every column
             for (int i = 2; i < tabela.size(); i++) {
-                String[] row = tabela.get(i).split(",");
+                String[] row = tabela.get(i).split(DELIMITER);
 
-                series.add(Double.parseDouble(row[0]), Double.parseDouble(row[index]));
+                series.add(Double.parseDouble(row[0]), Double.parseDouble(sanitize(row[index])));
             }
 
             seriesCollection.addSeries(series);

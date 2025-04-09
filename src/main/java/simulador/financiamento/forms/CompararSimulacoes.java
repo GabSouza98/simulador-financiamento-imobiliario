@@ -58,12 +58,12 @@ public class CompararSimulacoes extends JFrame {
             row[0] = sistemaAmortizacao.getNomeFinanciamento();
             row[1] = sistemaAmortizacao.getNumeroParcelas() + "/" + sistemaAmortizacao.getPrazo();
             row[2] = String.format("%.2f%%", sistemaAmortizacao.getJurosAnual() * 100);
-            row[3] = String.format("%.0f", sistemaAmortizacao.getValorImovel());
-            row[4] = String.format("%.0f", sistemaAmortizacao.getEntrada());
-            row[5] = String.format("%.0f", sistemaAmortizacao.getValorPagoTotal());
+            row[3] = String.format("%,.0f", sistemaAmortizacao.getValorImovel());
+            row[4] = String.format("%,.0f", sistemaAmortizacao.getEntrada());
+            row[5] = String.format("%,.0f", sistemaAmortizacao.getValorPagoTotal());
             row[6] = String.format("%.2f", sistemaAmortizacao.getValorPagoTotal() / sistemaAmortizacao.getValorImovel());
-            row[7] = String.format("%.0f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado());
-            row[8] = String.format("%.0f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao());
+            row[7] = String.format("%,.0f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelValorizado());
+            row[8] = String.format("%,.0f", sistemaAmortizacao.getOpcoesAvancadas().getValorImovelInflacao());
 
             data[i] = row;
         }

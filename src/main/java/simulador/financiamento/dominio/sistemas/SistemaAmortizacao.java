@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static simulador.financiamento.utils.Constants.DELIMITER;
+
 @Getter
 @Setter
 public abstract class SistemaAmortizacao implements Serializable {
@@ -77,8 +79,6 @@ public abstract class SistemaAmortizacao implements Serializable {
         } while (saldoDevedor > 0.001);
 
         opcoesAvancadas.atualizarValorImovel(numeroParcelas);
-
-        System.out.println("Calculado com sucesso");
     }
 
     private Double calcularMes() {
@@ -129,7 +129,8 @@ public abstract class SistemaAmortizacao implements Serializable {
     private void calcularPrimeiroMes() {
         opcoesAvancadas.setValorImovelInicial(valorImovel);
         valorPagoMensalList.add(0.0);
-        tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
+//        tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f", 0, 0.0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
+        tabela.add(formatRow(0, 0.0, 0.0, 0.0, 0.0, saldoDevedor));
     }
 
     private void checarSaldoDevedorNegativo() {
@@ -153,10 +154,21 @@ public abstract class SistemaAmortizacao implements Serializable {
     }
 
     private void atualizarCampos() {
-        //System.out.println(String.format("Parcela %d | Saldo Devedor: R$ %.2f | Valor Parcela: R$ %.2f | Valor Extra: R$ %.2f | Valor Pago Mensal: R$ %.2f", numeroParcelas, saldoDevedor, parcela, valorExtra, valorPagoMensal));
         this.valorPagoMensalList.add(valorPagoMensal);
-        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-                numeroParcelas, amortizacaoMensal, jurosMensal, parcela, valorPagoMensal - parcela, valorPagoMensal, saldoDevedor));
+//        this.tabela.add(String.format(Locale.US, "%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+//                numeroParcelas, amortizacaoMensal, jurosMensal, parcela, valorPagoMensal - parcela, valorPagoMensal, saldoDevedor));
+
+        this.tabela.add(formatRow(numeroParcelas, amortizacaoMensal, jurosMensal, parcela, valorPagoMensal, saldoDevedor));
+    }
+
+    private String formatRow(Integer numeroParcelas, Double amortizacaoMensal, Double jurosMensal, Double parcela, Double valorPagoMensal, Double saldoDevedor) {
+        return String.format("%d", numeroParcelas).concat(DELIMITER)
+                .concat(String.format("%,.2f", amortizacaoMensal)).concat(DELIMITER)
+                .concat(String.format("%,.2f", jurosMensal)).concat(DELIMITER)
+                .concat(String.format("%,.2f", parcela)).concat(DELIMITER)
+                .concat(String.format("%,.2f", valorPagoMensal - parcela)).concat(DELIMITER)
+                .concat(String.format("%,.2f", valorPagoMensal)).concat(DELIMITER)
+                .concat(String.format("%,.2f", saldoDevedor));
     }
 
     protected abstract void atualizarParcela();

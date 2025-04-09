@@ -565,8 +565,6 @@ public class SimuladorFinanciamento extends JFrame {
         saldoInvestido.setText(String.format("Saldo Valor Investido: R$ %,.2f", investimentos.getValorInvestido()));
 
         opcoesAvancadas = opcoesAvanc;
-
-        System.out.println(simulationsList);
     }
 
     private boolean validateJTextField() {

@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
+import static simulador.financiamento.utils.Constants.DELIMITER;
+
 public class SwingUtils {
 
     public static JTable getSimulationJTable(SistemaAmortizacao sistemaAmortizacao) {
@@ -19,7 +21,7 @@ public class SwingUtils {
         String[][] data = new String[tabela.size() - 1][columnNames.length];
         for (int i = 1; i < tabela.size(); i++) {
             //Usando a tabela de string
-            String[] row = tabela.get(i).split(",");
+            String[] row = tabela.get(i).split(DELIMITER);
             data[i - 1] = row;
         }
 

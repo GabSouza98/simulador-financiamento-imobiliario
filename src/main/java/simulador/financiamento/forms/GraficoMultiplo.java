@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static simulador.financiamento.utils.Constants.DELIMITER;
+import static simulador.financiamento.utils.Constants.sanitize;
+
 public class GraficoMultiplo extends JFrame {
     private JPanel graficoMultiploPanel;
     private JLabel selecioneGraficosLabel;
@@ -142,12 +145,12 @@ public class GraficoMultiplo extends JFrame {
             List<String> tabela = sistemaAmortizacao.getTabela();
             //Starts at 2 to skip header in table and first row which is 0 in every column
             for (int i = 2; i < tabela.size(); i++) {
-                String[] row = tabela.get(i).split(",");
+                String[] row = tabela.get(i).split(DELIMITER);
 
                 // Dessa maneira, iteramos uma vez só pela tabela, para cada simulação.
                 // Numa rodada já coletamos todos os itens selecionados.
                 selectedIndexes.forEach(index -> {
-                    series[index].add(Double.parseDouble(row[0]), Double.parseDouble(row[index]));
+                    series[index].add(Double.parseDouble(row[0]), Double.parseDouble(sanitize(row[index])));
                 });
             }
 
@@ -218,8 +221,8 @@ public class GraficoMultiplo extends JFrame {
             List<String> tabela = sistemaAmortizacao.getTabela();
             //Starts at 2 to skip header in table and first row which is 0 in every column
             for (int i = 2; i < tabela.size(); i++) {
-                String[] row = tabela.get(i).split(",");
-                series.add(Double.parseDouble(row[0]), Double.parseDouble(row[index]));
+                String[] row = tabela.get(i).split(DELIMITER);
+                series.add(Double.parseDouble(row[0]), Double.parseDouble(sanitize(row[index])));
             }
 
             seriesCollection.addSeries(series);

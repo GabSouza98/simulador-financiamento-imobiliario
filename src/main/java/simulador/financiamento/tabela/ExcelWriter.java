@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static simulador.financiamento.utils.Constants.DELIMITER;
+
 public class ExcelWriter {
 
     public void writeTable(SistemaAmortizacao sistemaAmortizacao) {
@@ -26,7 +28,7 @@ public class ExcelWriter {
         Sheet sheet = workbook.createSheet(sistemaAmortizacao.getNomeFinanciamento());
 
         //Set column width for each column and populates header
-        String[] headerData = tabela.get(0).split(",");
+        String[] headerData = tabela.get(0).split(DELIMITER);
         Row header = sheet.createRow(0);
         for (int z=0; z<headerData.length; z++) {
             sheet.setColumnWidth(z, 6000);
@@ -38,7 +40,7 @@ public class ExcelWriter {
         //Create row for each line and set each cell value in the row
         for (int i=1; i<tabela.size(); i++) {
             Row row = sheet.createRow(i);
-            String[] data = tabela.get(i).split(",");
+            String[] data = tabela.get(i).split(DELIMITER);
             for (int j=0; j<data.length; j++) {
                 Cell cell = row.createCell(j);
                 cell.setCellValue(data[j]);
