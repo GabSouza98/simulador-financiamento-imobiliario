@@ -6,9 +6,11 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
@@ -18,6 +20,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.enums.GraficoLabels;
 import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
+import simulador.financiamento.utils.Constants;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -25,6 +28,8 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static simulador.financiamento.utils.Constants.PAINT_ARRAY;
 
 public class GraficoMultiplo extends JFrame {
     private JPanel graficoMultiploPanel;
@@ -121,8 +126,6 @@ public class GraficoMultiplo extends JFrame {
 
     private void criarGraficoCombinado() {
         NumberAxis xLabel = new NumberAxis("Número de Parcelas");
-        xLabel.setLabelPaint(Color.WHITE);
-        xLabel.setTickLabelPaint(Color.WHITE);
         final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(xLabel);
 
         //Ao total pode haver 7 coleções
@@ -158,31 +161,13 @@ public class GraficoMultiplo extends JFrame {
         });
 
         selectedIndexes.forEach(index -> {
+            //Cria um XYPlot para cada índice selecionado, cada um com seu próprio objeto renderer.
             final XYItemRenderer renderer = new StandardXYItemRenderer();
-            renderer.setDefaultStroke(new BasicStroke(2.5f));
+            renderer.setDefaultStroke(new BasicStroke(Constants.LINE_THICKNESS));
             ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
 
-            if (!plot.getSubplots().isEmpty()) {
-                var firstCollection = seriesCollection[1]; //a seriesCollection[0] guarda o número de prestações e não é utilizado.
-
-                var firstRenderer = plot.getSubplots().get(0).getRenderer();
-
-                for (int i = 0; i < firstCollection.getSeriesCount(); i++) { //firstCollection.getSeriesCount() também é igual a simulationsList.size()
-                    //www.jfree.org/forum/viewtopic.php?t=30258
-                    //Busca a cor usada em cada série no primeiro gráfico e aplica na série correspondente
-                    renderer.setSeriesPaint(i, firstRenderer.getItemPaint(i, 0));
-                    //Faz com que a legenda não fique visível (não se repita), pois ela tem sempre o mesmo nome para cada série (sistemaAmortizacao.getNomeFinanciamento())
-                    renderer.setSeriesVisibleInLegend(i, false);
-                }
-            }
-
             final NumberAxis rangeY = new NumberAxis(GraficoLabels.getGraficoLabelByIndex(index).getYLabel());
-            rangeY.setLabelPaint(Color.WHITE);
-            rangeY.setTickLabelPaint(Color.WHITE);
-
             final XYPlot subplot = new XYPlot(seriesCollection[index], null, rangeY, renderer);
-            subplot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-            subplot.setBackgroundPaint(Color.WHITE);
 
             plot.add(subplot, 1);
         });
@@ -191,9 +176,24 @@ public class GraficoMultiplo extends JFrame {
         plot.setOrientation(PlotOrientation.VERTICAL);
 
         JFreeChart chart = new JFreeChart("Gráfico Combinado", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-        chart.getTitle().setPaint(Color.WHITE);
-        chart.getLegend().setBackgroundPaint(null);
-        chart.getLegend().setItemPaint(Color.WHITE);
+
+        //Opcao 1
+        new StandardChartTheme("JFree").apply(chart);
+
+        if (!plot.getSubplots().isEmpty()) {
+            var firstRenderer = plot.getSubplots().get(0).getRenderer();
+
+            for (int j = 1; j < plot.getSubplots().size(); j++) {
+                var renderer = plot.getSubplots().get(j).getRenderer();
+                for (int i = 0; i < seriesCollection[1].getSeriesCount(); i++) { //seriesCollection[1].getSeriesCount() também é igual a simulationsList.size()
+                    //www.jfree.org/forum/viewtopic.php?t=30258
+                    //Busca a cor usada em cada série no primeiro gráfico e aplica na série correspondente
+                    renderer.setSeriesPaint(i, firstRenderer.getItemPaint(i, 0));
+                    //Faz com que a legenda não fique visível (não se repita), pois ela tem sempre o mesmo nome para cada série (sistemaAmortizacao.getNomeFinanciamento())
+                    renderer.setSeriesVisibleInLegend(i, false);
+                }
+            }
+        }
 
         ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
         panel.setMouseZoomable(true, false);
@@ -231,7 +231,7 @@ public class GraficoMultiplo extends JFrame {
         GraficoLabels graficoLabel = GraficoLabels.getGraficoLabelByIndex(index);
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(graficoLabel.getTitulo(), "Número de Parcelas", graficoLabel.getYLabel(), seriesCollection);
         XYItemRenderer renderer = jFreeChart.getXYPlot().getRenderer();
-        renderer.setDefaultStroke(new BasicStroke(2.5f));
+        renderer.setDefaultStroke(new BasicStroke(Constants.LINE_THICKNESS));
         ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
         ChartPanel chartPanel = new ChartPanel(jFreeChart, true, true, true, true, true);
         showChart(graficoLabel.getTitulo(), chartPanel);

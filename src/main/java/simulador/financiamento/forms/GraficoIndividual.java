@@ -12,6 +12,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import simulador.financiamento.dominio.enums.GraficoLabels;
 import simulador.financiamento.dominio.sistemas.SistemaAmortizacao;
+import simulador.financiamento.utils.Constants;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -88,7 +89,7 @@ public class GraficoIndividual extends JFrame {
         GraficoLabels graficoLabel = GraficoLabels.getGraficoLabelByIndex(index);
         JFreeChart jFreeChart = ChartFactory.createXYLineChart(graficoLabel.getTitulo(), "Número de Parcelas", graficoLabel.getYLabel(), seriesCollection);
         XYItemRenderer renderer = jFreeChart.getXYPlot().getRenderer();
-        renderer.setDefaultStroke(new BasicStroke(2.5f));
+        renderer.setDefaultStroke(new BasicStroke(Constants.LINE_THICKNESS));
         ((AbstractRenderer) renderer).setAutoPopulateSeriesStroke(false);
 
         ChartPanel chartPanel = new ChartPanel(jFreeChart,
