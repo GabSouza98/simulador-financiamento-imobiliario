@@ -58,6 +58,7 @@ public class JTabbedPaneCloseButton extends JTabbedPane {
             add(button);
         }
     }
+
     /* ClickListener */
     public class CloseListener implements MouseListener
     {

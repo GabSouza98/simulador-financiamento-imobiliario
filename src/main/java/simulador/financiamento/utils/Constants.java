@@ -1,5 +1,9 @@
 package simulador.financiamento.utils;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.regex.Pattern;
+
 public final class Constants {
 
     private Constants(){}
@@ -18,9 +22,28 @@ public final class Constants {
 
     public static final String DELIMITER = ";";
 
+    public static final DecimalFormat decimalFormatter = new DecimalFormat("###,###,###,###,##0.##");
+
+    public static Pattern pattern = Pattern.compile("^[+-]?([0-9]{1,3}(\\.[0-9]{3})*(,[0-9]+)?|\\d*,\\d+|\\d+)$");
 
     public static String sanitize(String input) {
-        return input.replace(".", "").replace(",", ".");
-    }
+        String inputWithoutDots = input.replace(".", "").replace(",", ".");
+        String inputDoubleFormat = inputWithoutDots.replace(",", ".");
 
+        String[] parts = inputDoubleFormat.split("\\.");
+
+        boolean isInteger = true;
+
+        if (parts.length == 2) {
+            String decimalPart = parts[1];
+            for (char c : decimalPart.toCharArray()) {
+                if (c != '0') {
+                    isInteger = false;
+                    break;
+                }
+            }
+        }
+
+        return isInteger ? parts[0] : inputDoubleFormat;
+    }
 }

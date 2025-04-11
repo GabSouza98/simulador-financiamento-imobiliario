@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import static java.util.Objects.isNull;
+import static simulador.financiamento.utils.Constants.*;
 
 public class OpcoesAvancadasDialog extends JDialog {
     private JPanel contentPane;
@@ -58,9 +59,53 @@ public class OpcoesAvancadasDialog extends JDialog {
     }
 
     private void onOK() {
+
+        if (inflacao.getText().isBlank()) {
+            inflacao.setText("0");
+        }
+
+        if (valorizacao.getText().isBlank()) {
+            valorizacao.setText("0");
+        }
+
+        if (!pattern.matcher(inflacao.getText()).matches()) {
+            JOptionPane.showMessageDialog(null,
+                    "O campo \"Inflação Anual\" não respeita o formato \"123.456,78\"." +
+                            "\nUse \",\" como separador decimal e \".\" como separador de milhar (opcional).",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!pattern.matcher(valorizacao.getText()).matches()) {
+            JOptionPane.showMessageDialog(null,
+                    "O campo \"Valorização Anual\" não respeita o formato \"123.456,78\"." +
+                            "\nUse \",\" como separador decimal e \".\" como separador de milhar (opcional).",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (Double.parseDouble(sanitize(inflacao.getText())) < 0) {
+            JOptionPane.showMessageDialog(null,
+                    "A expectativa de inflação não pode ser negativa. Valor atual: " + inflacao.getText(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (Double.parseDouble(sanitize(valorizacao.getText())) < 0) {
+            JOptionPane.showMessageDialog(null,
+                    "A expectativa de valorização não pode ser negativa. Valor atual: " + valorizacao.getText(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         opcoesAvancadas = new OpcoesAvancadas(
-                Double.valueOf(inflacao.getText()),
-                Double.valueOf(valorizacao.getText()));
+                Double.valueOf(sanitize(inflacao.getText())),
+                Double.valueOf(sanitize(valorizacao.getText()))
+        );
 
         setVisible(false);
         dispose();
@@ -76,8 +121,8 @@ public class OpcoesAvancadasDialog extends JDialog {
             inflacao.setText("0");
             valorizacao.setText("0");
         } else {
-            inflacao.setText(opcoesAvancadas.getInflacao().toString());
-            valorizacao.setText(opcoesAvancadas.getValorizacao().toString());
+            inflacao.setText(decimalFormatter.format(opcoesAvancadas.getInflacao()));
+            valorizacao.setText(decimalFormatter.format(opcoesAvancadas.getValorizacao()));
         }
     }
 

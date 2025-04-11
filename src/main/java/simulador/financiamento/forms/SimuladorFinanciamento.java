@@ -26,10 +26,13 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static simulador.financiamento.utils.Constants.*;
 
 public class SimuladorFinanciamento extends JFrame {
 
@@ -164,6 +167,10 @@ public class SimuladorFinanciamento extends JFrame {
         loadButton.addActionListener(e -> carregar());
 
         tabs.addChangeListener(e -> {
+            if (simulationsList.isEmpty()) {
+                resetFields();
+            }
+
             if (!simulationsList.isEmpty() && simulationsList.size() == tabs.getTabCount()) {
                 int selectedTab = tabs.getSelectedIndex();
                 SistemaAmortizacao sistemaAmortizacao = simulationsList.get(selectedTab);
@@ -387,15 +394,18 @@ public class SimuladorFinanciamento extends JFrame {
     private void calcularFinanciamento() {
 
         if (!validateJTextField() ||
-                !validateIntegerFields() ||
-                !validateValorImovel() ||
-                !validateTaxaJuros() ||
-                !validatePrazo() ||
-                !validateProxValorExtra() ||
-                !validateMesInicial() ||
-                !validateIntervalo() ||
-                !validateResgate() ||
-                !validateDuplicatedSimulationName()) {
+            !validateIntegerFields() ||
+            !validateValorImovel() ||
+            !validateTaxaJuros() ||
+            !validatePrazo() ||
+            !validateRecorrencia() ||
+            !validateProxValorExtra() ||
+            !validateMesInicial() ||
+            !validateIntervalo() ||
+            !validateInvestimentos() ||
+            !validateResgate() ||
+            !validateFGTS() ||
+            !validateDuplicatedSimulationName()) {
             return;
         }
 
@@ -414,20 +424,20 @@ public class SimuladorFinanciamento extends JFrame {
         JTable jTable = SwingUtils.getSimulationJTable(sistemaAmortizacao);
         JScrollPane scrollPane = new JScrollPane(jTable);
 
+        simulationsList.add(sistemaAmortizacao);
+
         tabs.add(nomeFinanciamento.getText(), scrollPane);
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
-
-        simulationsList.add(sistemaAmortizacao);
     }
 
     private SistemaAmortizacao getSistemaAmortizacao(String sistemaSelecionado) {
 
         Financiamento financiamento = new Financiamento(
                 nomeFinanciamento.getText(),
-                Double.valueOf(valorImovel.getText()),
+                Double.valueOf(sanitize(valorImovel.getText())),
                 (double) percentualEntrada.getValue(),
-                Double.valueOf(jurosAnual.getText()),
-                Integer.valueOf(prazo.getText())
+                Double.valueOf(sanitize(jurosAnual.getText())),
+                Integer.valueOf(sanitize(prazo.getText()))
         );
 
         //Se os campos não estiverem selecionados, não serão considerados.
@@ -444,25 +454,25 @@ public class SimuladorFinanciamento extends JFrame {
         }
 
         Recorrencia recorrencia = new Recorrencia(
-                Double.valueOf(valorExtraInicial.getText()),
-                Double.valueOf(percentProximoValorExtra.getText()),
-                Double.valueOf(valorExtraMinimo.getText()),
-                Integer.valueOf(mesInicial.getText()),
-                Integer.valueOf(intervalo.getText()),
-                Integer.valueOf(repeticoes.getText()),
+                Double.valueOf(sanitize(valorExtraInicial.getText())),
+                Double.valueOf(sanitize(percentProximoValorExtra.getText())),
+                Double.valueOf(sanitize(valorExtraMinimo.getText())),
+                Integer.valueOf(sanitize(mesInicial.getText())),
+                Integer.valueOf(sanitize(intervalo.getText())),
+                Integer.valueOf(sanitize(repeticoes.getText())),
                 sempreCheckBox.isSelected()
         );
 
         Investimentos investimentos = new Investimentos(
-                Double.valueOf(valorInvestido.getText()),
-                Double.valueOf(rendimentoAnual.getText()),
-                Integer.valueOf(resgate.getText()),
+                Double.valueOf(sanitize(valorInvestido.getText())),
+                Double.valueOf(sanitize(rendimentoAnual.getText())),
+                Integer.valueOf(sanitize(resgate.getText())),
                 (String) resgateComboBox.getSelectedItem()
         );
 
         FGTS fgts = new FGTS(
-                Double.valueOf(saldoFGTS.getText()),
-                Double.valueOf(salarioBruto.getText())
+                Double.valueOf(sanitize(saldoFGTS.getText())),
+                Double.valueOf(sanitize(salarioBruto.getText()))
         );
 
         SistemaAmortizacaoEnum sistema = SistemaAmortizacaoEnum.getByName(sistemaSelecionado);
@@ -485,37 +495,25 @@ public class SimuladorFinanciamento extends JFrame {
         jurosAnual.setText("");
         prazo.setText("");
 
-        valorExtraInicial.setText("0");
-        percentProximoValorExtra.setText("100");
-        valorExtraMinimo.setText("0");
-        mesInicial.setText("1");
-        intervalo.setText("1");
-        repeticoes.setText("0");
-
-        valorInvestido.setText("0");
-        rendimentoAnual.setText("0");
-        resgate.setText("2");
-        resgateComboBox.setSelectedIndex(0);
-
-        salarioBruto.setText("0");
-        saldoFGTS.setText("0");
+        preencheCamposOpcionaisDefault();
     }
 
     private void updateFields(SistemaAmortizacao sistemaAmortizacao) {
         nomeFinanciamento.setText(sistemaAmortizacao.getNomeFinanciamento());
-        valorImovel.setText(sistemaAmortizacao.getValorImovel().toString());
+        valorImovel.setText(decimalFormatter.format(sistemaAmortizacao.getValorImovel()));
         percentualEntrada.setValue((int) (sistemaAmortizacao.getPercentualEntrada() * 100));
         sistemaAmortizacaoComboBox.setSelectedIndex(sistemaAmortizacao.getSistemaAmortizacao().getIndex());
-        jurosAnual.setText(String.valueOf(sistemaAmortizacao.getJurosAnual()));
+        jurosAnual.setText(decimalFormatter.format(sistemaAmortizacao.getJurosAnual()));
         prazo.setText(String.valueOf(sistemaAmortizacao.getPrazo()));
 
         Recorrencia recorrencia = AmortizacaoExtra.buscarAmortizacaoExtra(Recorrencia.class, sistemaAmortizacao.getAmortizacaoExtraList());
-        valorExtraInicial.setText(recorrencia.getValorExtraInicial().toString());
-        percentProximoValorExtra.setText(String.valueOf(recorrencia.getPercentProximoValorExtra() * 100));
-        valorExtraMinimo.setText(recorrencia.getValorExtraMinimo().toString());
+        valorExtraInicial.setText(decimalFormatter.format(recorrencia.getValorExtraInicial()));
+        percentProximoValorExtra.setText(decimalFormatter.format(recorrencia.getPercentProximoValorExtra() * 100));
+        valorExtraMinimo.setText(decimalFormatter.format(recorrencia.getValorExtraMinimo()));
         mesInicial.setText(recorrencia.getMesInicial().toString());
         intervalo.setText(recorrencia.getIntervalo().toString());
         repeticoes.setText(recorrencia.getQuantidadeAmortizacoesDesejadas().toString());
+        sempreCheckBox.setSelected(recorrencia.getSemLimiteAmortizacoes());
 
         //Marca o campo caso tenha valor
         if (recorrencia.getValorExtra() > 0) {
@@ -527,8 +525,8 @@ public class SimuladorFinanciamento extends JFrame {
         }
 
         Investimentos investimentos = AmortizacaoExtra.buscarAmortizacaoExtra(Investimentos.class, sistemaAmortizacao.getAmortizacaoExtraList());
-        valorInvestido.setText(investimentos.getValorInicialPrimeiroAporte().toString());
-        rendimentoAnual.setText(investimentos.getRendimentoAnual().toString());
+        valorInvestido.setText(decimalFormatter.format(investimentos.getValorInicialPrimeiroAporte()));
+        rendimentoAnual.setText(decimalFormatter.format(investimentos.getRendimentoAnual()));
         resgate.setText(investimentos.getPrazoResgateAnos().toString());
         resgateComboBox.setSelectedIndex(investimentos.getAcao().getIndex());
 
@@ -541,8 +539,8 @@ public class SimuladorFinanciamento extends JFrame {
         }
 
         FGTS fgts = AmortizacaoExtra.buscarAmortizacaoExtra(FGTS.class, sistemaAmortizacao.getAmortizacaoExtraList());
-        salarioBruto.setText(fgts.getSalario().toString());
-        saldoFGTS.setText(fgts.getSaldoInicial().toString());
+        salarioBruto.setText(decimalFormatter.format(fgts.getSalario()));
+        saldoFGTS.setText(decimalFormatter.format(fgts.getSaldoInicial()));
 
         if (fgts.getSalario() > 0) {
             fgtsCheckBox.setSelected(true);
@@ -582,25 +580,37 @@ public class SimuladorFinanciamento extends JFrame {
                 f.setAccessible(true);
                 JTextField textField = (JTextField) f.get(this);
 
-                //Substitui vírgula por ponto
-                if (textField.getText().contains(",")) {
-                    String originalText = textField.getText();
-                    textField.setText(originalText.replace(",", "."));
-                }
+                if (textField.getText().isBlank()) {
+                    if (f.getName().equals("nomeFinanciamento") ||
+                        f.getName().equals("valorImovel") ||
+                        f.getName().equals("jurosAnual") ||
+                        f.getName().equals("prazo")) {
 
-                if (textField.getText().isBlank() || textField.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Nenhum campo pode ficar em branco. Campo em branco: " + f.getName(),
-                            "Erro",
-                            JOptionPane.ERROR_MESSAGE);
-                    return false;
+                        JOptionPane.showMessageDialog(null,
+                                "Nenhum campo obrigatório pode ficar em branco." +
+                                        "\nCampo em branco: " + f.getName() + ".",
+                                "Erro",
+                                JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    } else {
+                        textField.setText("0");
+                    }
                 }
 
                 if (f.getName().equals("nomeFinanciamento")) {
                     continue;
                 }
 
-                double number = Double.parseDouble(textField.getText());
+                if (!pattern.matcher(textField.getText()).matches()) {
+                    JOptionPane.showMessageDialog(null,
+                            "O campo \"" + f.getName() + "\" não respeita o formato \"123.456,78\"." +
+                                    "\nUse \",\" como separador decimal e \".\" como separador de milhar (opcional).",
+                            "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+
+                double number = Double.parseDouble(sanitize(textField.getText()));
                 if (number < 0) {
                     JOptionPane.showMessageDialog(null,
                             "Nenhum campo pode ser negativo. Campo negativo: " + f.getName() + ". Valor: " + textField.getText(),
@@ -626,7 +636,7 @@ public class SimuladorFinanciamento extends JFrame {
 
         for (JTextField jTextField : jTextFieldList) {
             try {
-                Integer.parseInt(jTextField.getText());
+                Integer.parseInt(sanitize(jTextField.getText()));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null,
                         "O campo deve ser um número inteiro. Valor atual: " + jTextField.getText(),
@@ -639,7 +649,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateTaxaJuros() {
-        double number = Double.parseDouble(jurosAnual.getText());
+        double number = Double.parseDouble(sanitize(jurosAnual.getText()));
 
         if (number <= 0) {
             JOptionPane.showMessageDialog(null,
@@ -653,7 +663,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validatePrazo() {
-        double number = Double.parseDouble(prazo.getText());
+        double number = Double.parseDouble(sanitize(prazo.getText()));
 
         if (number <= 0) {
             JOptionPane.showMessageDialog(null,
@@ -667,7 +677,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateResgate() {
-        if (Integer.parseInt(resgate.getText()) < 2) {
+        if (Integer.parseInt(sanitize(resgate.getText())) < 2) {
             resgate.setText("2");
             JOptionPane.showMessageDialog(null,
                     "O tempo mínimo para resgate é de 2 anos.",
@@ -679,7 +689,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateIntervalo() {
-        if (Integer.parseInt(intervalo.getText()) < 1) {
+        if (Integer.parseInt(sanitize(intervalo.getText())) < 1) {
             intervalo.setText("1");
             JOptionPane.showMessageDialog(null,
                     "O intervalo entre pagamentos deve ser maior ou igual a 1.",
@@ -691,7 +701,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateMesInicial() {
-        if (Integer.parseInt(mesInicial.getText()) < 1) {
+        if (Integer.parseInt(sanitize(mesInicial.getText())) < 1) {
             mesInicial.setText("1");
             JOptionPane.showMessageDialog(null,
                     "O mês inicial para amortizações extra deve ser maior ou igual a 1.",
@@ -703,7 +713,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateProxValorExtra() {
-        double number = Double.parseDouble(percentProximoValorExtra.getText());
+        double number = Double.parseDouble(sanitize(percentProximoValorExtra.getText()));
         if (number < 0 || number > 100) {
             JOptionPane.showMessageDialog(null,
                     "O valor do campo Próx. Valor deve estar entre 0 e 100. Valor atual: " + percentProximoValorExtra.getText(),
@@ -731,7 +741,7 @@ public class SimuladorFinanciamento extends JFrame {
     }
 
     private boolean validateValorImovel() {
-        double number = Double.parseDouble(valorImovel.getText());
+        double number = Double.parseDouble(sanitize(valorImovel.getText()));
 
         if (number <= 0) {
             JOptionPane.showMessageDialog(null,
@@ -739,6 +749,66 @@ public class SimuladorFinanciamento extends JFrame {
                     "Erro",
                     JOptionPane.ERROR_MESSAGE);
             return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateRecorrencia() {
+        if (recorrenciaCheckBox.isSelected()) {
+            if (Double.parseDouble(sanitize(valorExtraInicial.getText())) <= 0) {
+                JOptionPane.showMessageDialog(null,
+                        "O campo \"Valor Inicial\" precisa ser maior que zero para a amortização ter efeito.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if (!sempreCheckBox.isSelected() && Integer.parseInt(sanitize(repeticoes.getText())) <= 0) {
+                mesInicial.setText("1");
+                JOptionPane.showMessageDialog(null,
+                        "O campo \"Repetições\" precisa ser maior que zero ou o checkbox\n \"Sempre\" " +
+                                "precisa estar selecionado para a amortização ter efeito.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateInvestimentos() {
+        if (investimentosCheckBox.isSelected()) {
+            if (Double.parseDouble(sanitize(valorInvestido.getText())) <= 0) {
+                JOptionPane.showMessageDialog(null,
+                        "O campo \"Valor Investido\" precisa ser maior que zero para a amortização ter efeito.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if (Double.parseDouble(sanitize(rendimentoAnual.getText())) <= 0) {
+                JOptionPane.showMessageDialog(null,
+                        "O campo \"Rendimento Anual\" precisa ser maior que zero para a amortização ter efeito.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateFGTS() {
+        if (fgtsCheckBox.isSelected()) {
+            if (Double.parseDouble(sanitize(salarioBruto.getText())) <= 0) {
+                JOptionPane.showMessageDialog(null,
+                        "O campo \"Salário Bruto\" precisa ser maior que zero para a amortização ter efeito.",
+                        "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         }
 
         return true;
