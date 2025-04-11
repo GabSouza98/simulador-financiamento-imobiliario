@@ -496,6 +496,14 @@ public class SimuladorFinanciamento extends JFrame {
         prazo.setText("");
 
         preencheCamposOpcionaisDefault();
+
+        recorrenciaCheckBox.setSelected(false);
+        investimentosCheckBox.setSelected(false);
+        fgtsCheckBox.setSelected(false);
+
+        desabilitaCamposRecorrencia();
+        desabilitaCamposInvestimentos();
+        desabilitaCamposFgts();
     }
 
     private void updateFields(SistemaAmortizacao sistemaAmortizacao) {
