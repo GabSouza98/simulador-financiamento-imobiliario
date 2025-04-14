@@ -284,7 +284,7 @@ public class SimuladorFinanciamento extends JFrame {
         calcularButton.setFont(new Font(calcularButton.getFont().getFontName(), Font.BOLD, 16));
         resetarCamposButton.setFont(new Font(resetarCamposButton.getFont().getFontName(), Font.PLAIN, 16));
         changeThemeButton.setFont(new Font(changeThemeButton.getFont().getFontName(), Font.PLAIN, 16));
-        compararSimulacoesButton.setFont(new Font(compararSimulacoesButton.getFont().getFontName(), Font.PLAIN, 16));
+        compararSimulacoesButton.setFont(new Font(compararSimulacoesButton.getFont().getFontName(), Font.BOLD, 16));
         advancedOptionsButton.setFont(new Font(advancedOptionsButton.getFont().getFontName(), Font.PLAIN, 16));
         downloadExcelButton.setFont(new Font(downloadExcelButton.getFont().getFontName(), Font.PLAIN, 16));
         saveButton.setFont(new Font(saveButton.getFont().getFontName(), Font.PLAIN, 16));
