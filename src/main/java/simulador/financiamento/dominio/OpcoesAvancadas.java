@@ -36,4 +36,11 @@ public class OpcoesAvancadas implements Serializable {
         valorImovelValorizado = valorImovelInicial * Math.pow(1 + valorizacaoMensal, numeroParcelas);
     }
 
+    public static OpcoesAvancadas from(OpcoesAvancadas opcoesAvancadas) {
+        return new OpcoesAvancadas(
+                opcoesAvancadas.getInflacao(),
+                opcoesAvancadas.getValorizacao()
+        );
+    }
+
 }

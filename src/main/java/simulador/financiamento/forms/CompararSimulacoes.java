@@ -27,7 +27,7 @@ public class CompararSimulacoes extends JFrame {
         setContentPane(compararSimulacoesPanel);
         setTitle("Comparar Simulações");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -57,7 +57,7 @@ public class CompararSimulacoes extends JFrame {
 
             row[0] = sistemaAmortizacao.getNomeFinanciamento();
             row[1] = sistemaAmortizacao.getNumeroParcelas() + "/" + sistemaAmortizacao.getPrazo();
-            row[2] = String.format("%.2f%%", sistemaAmortizacao.getJurosAnual() * 100);
+            row[2] = String.format("%.2f%%", sistemaAmortizacao.getJurosAnual());
             row[3] = String.format("%,.0f", sistemaAmortizacao.getValorImovel());
             row[4] = String.format("%,.0f", sistemaAmortizacao.getEntrada());
             row[5] = String.format("%,.0f", sistemaAmortizacao.getValorPagoTotal());
@@ -95,7 +95,7 @@ public class CompararSimulacoes extends JFrame {
         );
 
 //        jTable.setMinimumSize(new Dimension(700, 200));
-        jTable.setPreferredScrollableViewportSize(new Dimension(860, 290));
+        jTable.setPreferredScrollableViewportSize(new Dimension(1000, 290));
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         jTable.setDefaultRenderer(String.class, centerRenderer);
@@ -120,8 +120,8 @@ public class CompararSimulacoes extends JFrame {
     private void $$$setupUI$$$() {
         compararSimulacoesPanel = new JPanel();
         compararSimulacoesPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
-        compararSimulacoesPanel.setMinimumSize(new Dimension(900, 420));
-        compararSimulacoesPanel.setPreferredSize(new Dimension(900, 420));
+        compararSimulacoesPanel.setMinimumSize(new Dimension(1100, 420));
+        compararSimulacoesPanel.setPreferredSize(new Dimension(1100, 420));
         compararSimulacoesLabel = new JLabel();
         Font compararSimulacoesLabelFont = this.$$$getFont$$$(null, Font.BOLD, 16, compararSimulacoesLabel.getFont());
         if (compararSimulacoesLabelFont != null) compararSimulacoesLabel.setFont(compararSimulacoesLabelFont);

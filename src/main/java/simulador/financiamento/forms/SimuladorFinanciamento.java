@@ -475,6 +475,8 @@ public class SimuladorFinanciamento extends JFrame {
                 Double.valueOf(sanitize(salarioBruto.getText()))
         );
 
+        OpcoesAvancadas opcoesAvancadas = OpcoesAvancadas.from(this.opcoesAvancadas);
+
         SistemaAmortizacaoEnum sistema = SistemaAmortizacaoEnum.getByName(sistemaSelecionado);
 
         return SistemaAmortizacaoFactory.getSistemaAmortizacao(
